@@ -1,9 +1,51 @@
-function App() {
+// import { useState } from 'react'
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+
+// import pages
+
+
+// import components
+import Header from '../components/Header';
+
+// Import context
+
+
+const Layout = () => {
   return (
     <>
-      <p className="bg-red-500">tes</p>
+      <Header />
+      {/* <div className="main">
+        <Outlet className="outlet" />
+      </div> */}
     </>
-  )
-}
+  );
+};
 
-export default App
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      // {
+      //   path: '/auth',
+      //   element: <Auth />,
+      // },
+      // {
+      //   path: '*',
+      //   element: <PageNotFound />,
+      // },
+    ],
+  },
+]);
+
+const App = () => {
+  return (
+    <div>
+      {/* <AuthProvider> */}
+        <RouterProvider router={router} />
+      {/* </AuthProvider> */}
+    </div>
+  );
+};
+
+export default App;
