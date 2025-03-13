@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
 // import pages
-
+import Auth from '../pages/Auth'
 
 // import components
 import Header from '../components/Header';
@@ -14,9 +14,7 @@ const Layout = () => {
   return (
     <>
       <Header />
-      {/* <div className="main">
-        <Outlet className="outlet" />
-      </div> */}
+      <Outlet />
     </>
   );
 };
@@ -26,10 +24,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
-      // {
-      //   path: '/auth',
-      //   element: <Auth />,
-      // },
+      {
+        path: '/auth',
+        element: <Auth />,
+      },
       // {
       //   path: '*',
       //   element: <PageNotFound />,
