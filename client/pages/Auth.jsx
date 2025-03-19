@@ -16,7 +16,7 @@ const Auth = () => {
     e.preventDefault();
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:5000/auth', {
+        const response = await axios.post('http://localhost:8000/auth', {
           email,
           password,
         });
@@ -30,7 +30,7 @@ const Auth = () => {
           return;
         }
 
-        const response = await axios.post('http://localhost:5000/users', {
+        const response = await axios.post('http://localhost:8000/users', {
           full_name: fullName,
           mobile_number: mobileNumber,
           email,
@@ -51,8 +51,8 @@ const Auth = () => {
       if (error.response) {
         if (error.response.data.msg === 'Invalid email or password!') {
           setMessage('Login failed! Please double check your email and password');
-        } else if (error.response.data.msg === 'Email is already exist, please try another email!') {
-          setMessage('Email is already exist, please try another email!');
+        } else if (error.response.data.msg === 'Email already exists, try another!') {
+          setMessage('Email already exists, try another!');
         }
       } else {
         setMessage('Server Error! Please try again later.');
