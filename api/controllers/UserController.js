@@ -1,50 +1,38 @@
-import UserModel from '../models/UserModel.js';
+const UserModel = require('../models/UserModel.js');
 
-export const createUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
-    const existingEmail = await UserModel.findOne({
-      where: {
-        email: req.body.email,
-      },
-    });
+    const existingUser = await UserModel.findOne({ email: req.body.email });
 
-    if (existingEmail) {
-      return res.status(400).json({
-        msg: 'Email is already exist, please try another email!',
-      });
+    if (existingUser) {
+      return res.status(400).json({ msg: 'Email already exists, try another!' });
     }
 
-    await UserModel.create(req.body);
-    res.status(201).json({
-      msg: 'User created!',
-    });
+    const newUser = new UserModel(req.body);
+    await newUser.save();
+
+    res.status(201).json({ msg: 'User created!' });
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ msg: 'Server error' });
   }
 };
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const response = await UserModel.findOne({
-      where: {
-        email: email,
-        password: password,
-      },
-    });
+    const user = await UserModel.findOne({ email, password });
 
-    if (response) {
-      res.status(200).json({
-        msg: 'Login successful',
-        response: response,
-      });
+    if (user) {
+      res.status(200).json({ msg: 'Login successful', user });
     } else {
-      res.status(400).json({
-        msg: 'Invalid email or password!',
-      });
+      res.status(400).json({ msg: 'Invalid email or password!' });
     }
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ msg: 'Server error' });
   }
 };
+
+module.exports = { createUser, loginUser };

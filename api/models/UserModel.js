@@ -1,39 +1,28 @@
-import { DataTypes, Model } from 'sequelize';
-import db from '../config/Database.js';
-
-class UserModel extends Model {}
-
-UserModel.init(
-  {
-    full_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    mobile_number: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      allowNull: false,
-      defaultValue: 'user',
-    },
+const mongoose = require("mongoose");
+const userSchema = new mongoose.Schema({
+  full_name: {
+    type: String,
+    required: true,
   },
-  {
-    sequelize: db,
-    modelName: 'UserModel',
-    tableName: 'user',
-    freezeTableName: true,
-  }
-);
+  mobile_number: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    required: true,
+    default: 'user',
+  },
+})
 
-export default UserModel;
+module.exports = mongoose.model("User", userSchema)

@@ -1,28 +1,28 @@
-import express from 'express';
-import cors from 'cors';
-import db from './config/Database.js';
+const express = require("express");
+const mongoose = require('mongoose');
 
 // import Route
-import UserRoute from './routes/UserRoute.js';
+const userRoutes = require("./routes/UserRoute.js");
 
 const app = express();
-const port = 5000;
+const PORT = 8000; 
 
-app.use(cors());
+const mongoDBURL = 'mongodb://127.0.0.1:27017/library';
+
+mongoose.connect(mongoDBURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+    .then(() => console.log("Connection Successful"))
+    .catch((err) => console.error("Connection Error:", err));
+
 app.use(express.json());
+app.use(userRoutes);
 
-// route
-app.use(UserRoute);
+app.listen(PORT, () => {
+    console.log(`Server started at port ${PORT}`);
+});
 
-(async () => {
-  try {
-    await db.sync();
-    console.log('Database synchronized successfully');
-  } catch (error) {
-    console.log(`Error syncing database:`, error);
-  }
-})();
-
-app.listen(5000, () => {
-  console.log(`Server is running in port ${port}`);
+app.get('/', (req, res) => {
+    res.send('Connected to MongoDB!');
 });
