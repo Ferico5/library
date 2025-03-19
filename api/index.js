@@ -25,7 +25,3 @@ app.use(userRoutes);
 app.listen(PORT, () => {
   console.log(`Server started at port ${PORT}`);
 });
-
-app.get('/', (req, res) => {
-  res.send('Connected to MongoDB!');
-});
