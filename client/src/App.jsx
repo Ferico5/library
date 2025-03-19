@@ -9,7 +9,7 @@ import Dashboard from '../pages/Dashboard'
 import Header from '../components/Header';
 
 // Import context
-
+import { AuthProvider } from "../auth/AuthContext";
 
 const Layout = () => {
   return (
@@ -44,9 +44,9 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <div>
-      {/* <AuthProvider> */}
+      <AuthProvider>
         <RouterProvider router={router} />
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </div>
   );
 };
