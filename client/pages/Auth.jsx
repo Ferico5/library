@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -16,13 +18,13 @@ const Auth = () => {
     e.preventDefault();
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:8000/auth', {
-          email,
-          password,
-        });
+        const response = await login(email, password);
 
         if (response.data.msg === 'Login successful') {
+          localStorage.setItem('token', response.data.token);
           navigate('/dashboard');
+        } else if (response.data?.msg === 'Invalid email or password!') {
+          setMessage('Login failed! Please double check your email and password');
         }
       } else {
         if (password !== confirmPassword) {
