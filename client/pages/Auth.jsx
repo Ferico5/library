@@ -53,6 +53,8 @@ const Auth = () => {
           setMessage('Login failed! Please double check your email and password');
         } else if (error.response.data.msg === 'Email already exists, try another!') {
           setMessage('Email already exists, try another!');
+        } else if (error.response.data.msg === 'Server error') {
+          setMessage('Server Error! Please try again later.');
         }
       } else {
         setMessage('Server Error! Please try again later.');
