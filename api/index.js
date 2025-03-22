@@ -4,6 +4,7 @@ const cors = require('cors');
 
 // import Route
 const userRoutes = require('./routes/UserRoute.js');
+const bookRoutes = require('./routes/BookRoute.js');
 
 const app = express();
 const PORT = 8000;
@@ -21,6 +22,7 @@ mongoose
 app.use(express.json());
 app.use(cors());
 app.use(userRoutes);
+app.use(bookRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started at port ${PORT}`);
