@@ -21,7 +21,7 @@ const Header = () => {
                 Dashboard
               </Link>
             </li>
-            {user.role === 'admin' ? (
+            {user && user.role === 'admin' ? (
               <>
                 <li>
                   <Link to="/new-book" className="hover:text-gray-400">
@@ -64,7 +64,12 @@ const Header = () => {
       )}
 
       {/* Nama User */}
-      {token && <p className="font-medium">{user?.full_name}</p>}
+      {token && user && <p className="font-medium">{user?.full_name}</p>}
+      {token && user && (
+        <button onClick={logout} className="bg-red-500 px-3 py-1 rounded-md hover:bg-red-600">
+          Logout
+        </button>
+      )}
     </div>
   );
 };
