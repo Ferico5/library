@@ -16,6 +16,14 @@ const borrowBook = async (req, res) => {
       return res.status(404).json({ msg: 'User not found!' });
     }
 
+    if (book.stock <= 0) {
+      return res.status(400).json({ msg: 'Book is out of stock!' });
+    }
+
+    // jika berhasil maka kurangi 1 dari stok
+    book.stock -= 1;
+    await book.save();
+
     const newBorrow = new BorrowedBook({
       id_book,
       id_borrower,
@@ -70,9 +78,21 @@ const returnBook = async (req, res) => {
       return res.status(404).json({ msg: 'Borrow record not found!' });
     }
 
+    if (borrowedBook.status === 'returned') {
+      return res.status(400).json({ msg: 'This book has already been returned!' });
+    }
+
+    const book = await Book.findById(borrowedBook.id_book);
+    if (!book) {
+      return res.status(404).json({ msg: 'Book record not found!' });
+    }
+
     borrowedBook.status = 'returned';
     borrowedBook.return_date = new Date();
 
+    // kembalikan jumlah stok seperti semula
+    book.stock += 1;
+    await book.save();
     await borrowedBook.save();
     res.status(200).json({ msg: 'Book returned successfully!', borrowedBook });
   } catch (error) {
