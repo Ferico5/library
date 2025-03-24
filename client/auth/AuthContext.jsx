@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -37,14 +35,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
-    const navigate = useNavigate();
-    navigate('/auth');
+    navigate('/auth')
   };
 
   return <AuthContext.Provider value={{ token, user, login, logout }}>{children}</AuthContext.Provider>;

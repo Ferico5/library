@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import libraryLogo from '../assets/library_logo.png';
 
 const Header = () => {
   const { token, user, logout } = useAuth();
+  const navigate = useNavigate();
   // const [role, setRole] = useState('user');
 
   return (
@@ -66,7 +67,7 @@ const Header = () => {
       {/* Nama User */}
       {token && user && <p className="font-medium">{user?.full_name}</p>}
       {token && user && (
-        <button onClick={logout} className="bg-red-500 px-3 py-1 rounded-md hover:bg-red-600">
+        <button onClick={() => logout(navigate)} className="bg-red-500 px-3 py-1 rounded-md hover:bg-red-600">
           Logout
         </button>
       )}
