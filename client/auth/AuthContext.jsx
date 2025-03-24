@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -25,17 +27,24 @@ export const AuthProvider = ({ children }) => {
       if (response.data.token) {
         setToken(response.data.token);
         setUser(response.data.user);
-        return true;
+        return response;
       }
     } catch (error) {
-      console.log(error);
-      return false;
+      if (error.response) {
+        return error.response;
+      }
+      return { data: { msg: 'Server error' } };
     }
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    const navigate = useNavigate();
+    navigate('/auth');
   };
 
   return <AuthContext.Provider value={{ token, user, login, logout }}>{children}</AuthContext.Provider>;

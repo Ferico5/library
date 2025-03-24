@@ -2,14 +2,14 @@
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
 // import pages
-import Auth from '../pages/Auth'
-import Dashboard from '../pages/Dashboard'
+import Auth from '../pages/Auth';
+import Dashboard from '../pages/Dashboard';
 
 // import components
 import Header from '../components/Header';
 
 // Import context
-import { AuthProvider } from "../auth/AuthContext";
+import { AuthProvider } from '../auth/AuthContext';
 
 const Layout = () => {
   return (
