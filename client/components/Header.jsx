@@ -21,6 +21,11 @@ const Header = () => {
                 Dashboard
               </Link>
             </li>
+            <li>
+              <Link to="/book-list" className="hover:text-gray-400">
+                Book List
+              </Link>
+            </li>
             {user && user.role === 'admin' ? (
               <>
                 <li>
@@ -42,18 +47,12 @@ const Header = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/book-list" className="hover:text-gray-400">
-                    Book List
-                  </Link>
-                </li>
-                <li>
                   <Link to="/borrowed-book" className="hover:text-gray-400">
                     Borrowed Book
                   </Link>
                 </li>
               </>
             )}
-
             <li>
               <Link to="/change-profile" className="hover:text-gray-400">
                 Change Password
@@ -63,7 +62,7 @@ const Header = () => {
         </nav>
       )}
 
-      <div className='flex items-center'>
+      <div className="flex items-center">
         {/* Nama User */}
         {token && user && <p className="font-medium mr-10">{user?.full_name}</p>}
         {token && user && (

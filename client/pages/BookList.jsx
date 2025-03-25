@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
-const BookList = ({ userRole }) => {
+const BookList = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const { user } = useAuth();
+  const role = user.role || 'user';
 
   const navigate = useNavigate();
 
@@ -77,7 +81,7 @@ const BookList = ({ userRole }) => {
               <p className="text-gray-300 mb-1">Category: {book.category}</p>
               <p className="text-gray-300 mb-1">Stock: {book.stock}</p>
 
-              {userRole === 'admin' ? (
+              {role === 'admin' ? (
                 <div className="mt-4 flex gap-2">
                   <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white rounded w-1/2" onClick={() => alert('Update feature coming soon!')}>
                     ✏️ Update
