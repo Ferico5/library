@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const BookList = ({ userRole }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -29,27 +32,35 @@ const BookList = ({ userRole }) => {
     }
   };
 
-//   const handleBorrow = async (id) => {
-//     // TO-DO LIST
-//     // const userId = localStorage.getItem('user_id');
+  const handleBorrow = async (id) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user._id;
 
-//     // if (!userId) {
-//     //   alert('User is not logged in. Please log in to borrow a book.');
-//     //   return;
-//     // }
+    if (!userId) {
+      alert('User is not logged in. Please log in to borrow a book.');
+      return;
+    }
 
-//     // try {
-//     //   const response = await axios.post('http://localhost:8000/borrow', {
-//     //     id_book: id,
-//     //     id_borrower: userId, // Gunakan ID pengguna yang valid
-//     //   });
+    try {
+      const response = await axios.post('http://localhost:8000/borrow-book', {
+        id_book: id,
+        id_borrower: userId,
+      });
 
-//     //   alert(response.data.msg || 'Book borrowed successfully!');
-//     // } catch (error) {
-//     //   console.error('Error borrowing book:', error);
-//     //   alert(error.response?.data?.msg || 'Failed to borrow the book.');
-//     // }
-//   };
+      alert(response.data.msg || 'Book borrowed successfully!');
+
+      setBooks((prevBooks) => {
+        prevBooks.map((book) => {
+          book._id === id ? { stock: book.stock - 1 } : book;
+        });
+      });
+
+      navigate('/borrowed-book');
+    } catch (error) {
+      console.error('Error borrowing book:', error);
+      alert(error.response?.data?.msg || 'Failed to borrow the book.');
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -76,7 +87,7 @@ const BookList = ({ userRole }) => {
                   </button>
                 </div>
               ) : (
-                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => alert('Borrow feature coming soon!')}>
+                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleBorrow(book._id)}>
                   📖 Borrow
                 </button>
               )}

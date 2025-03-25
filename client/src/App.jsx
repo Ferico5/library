@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Auth from '../pages/Auth';
 import Dashboard from '../pages/Dashboard';
 import BookList from '../pages/BookList';
+import BorrowedBook from '../pages/BorrowedBook';
 
 // import components
 import Header from '../components/Header';
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: '/book-list',
         element: <BookList />,
+      },
+      {
+        path: '/borrowed-book',
+        element: <BorrowedBook />,
       },
       // {
       //   path: '*',
