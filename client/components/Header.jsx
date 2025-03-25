@@ -6,7 +6,6 @@ import libraryLogo from '../assets/library_logo.png';
 const Header = () => {
   const { token, user, logout } = useAuth();
   const navigate = useNavigate();
-  // const [role, setRole] = useState('user');
 
   return (
     <div className="bg-[#1E1E2E] text-white flex justify-between items-center px-10 shadow-lg">

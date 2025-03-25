@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuth } from '../auth/AuthContext';
 
 const Dashboard = () => {
-  const [role, setRole] = useState('user');
+  const { user } = useAuth();
+  const role = user.role || 'user';
 
   return (
     <div className="flex">
