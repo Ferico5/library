@@ -69,6 +69,25 @@ const getBorrowedBook = async (req, res) => {
   }
 };
 
+const getBorrowedBookByIdUser = async (req, res) => {
+  try {
+    const { id_borrower } = req.params;
+
+    const borrowedBooks = await BorrowedBook.find({ id_borrower, status: 'borrowed' }).populate('id_book', 'book_title author category').sort({ borrowed_date: -1 });
+
+    const returnedBooks = await BorrowedBook.find({ id_borrower, status: 'returned' }).populate('id_book', 'book_title author category').sort({ return_date: -1 });
+
+    res.status(200).json({
+      msg: 'Successfully retrieved borrowed books',
+      borrowed: borrowedBooks,
+      returned: returnedBooks,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
 const returnBook = async (req, res) => {
   try {
     const { id } = req.params;
@@ -101,4 +120,4 @@ const returnBook = async (req, res) => {
   }
 };
 
-module.exports = { borrowBook, getHistoryBorrowedBooks, getBorrowedBook, returnBook };
+module.exports = { borrowBook, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook };
