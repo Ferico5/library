@@ -36,7 +36,7 @@ const BookList = () => {
     }
   };
 
-  const handleBorrow = async (id) => {
+  const handleReservation = async (id) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userId = user._id;
 
@@ -46,19 +46,12 @@ const BookList = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/borrow-book', {
+      const response = await axios.post('http://localhost:8000/reserve-book', {
         id_book: id,
         id_borrower: userId,
       });
 
-      alert(response.data.msg || 'Book borrowed successfully!');
-
-      setBooks((prevBooks) => {
-        prevBooks.map((book) => {
-          book._id === id ? { ...book, stock: book.stock - 1 } : book;
-        });
-      });
-
+      alert(response.data.msg || 'Book reserved successfully!');
       navigate('/borrowed-book');
     } catch (error) {
       console.error('Error borrowing book:', error);
@@ -91,8 +84,8 @@ const BookList = () => {
                   </button>
                 </div>
               ) : (
-                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleBorrow(book._id)}>
-                  📖 Borrow
+                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book._id)}>
+                  📖 Reservation
                 </button>
               )}
             </div>

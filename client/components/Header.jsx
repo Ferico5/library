@@ -34,6 +34,11 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/reserved-book" className="hover:text-gray-400">
+                    Reserved Book
+                  </Link>
+                </li>
+                <li>
                   <Link to="/overdue-book" className="hover:text-gray-400">
                     Overdue Book
                   </Link>

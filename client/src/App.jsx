@@ -14,6 +14,7 @@ import Header from '../components/Header';
 
 // Import context
 import { AuthProvider } from '../auth/AuthContext';
+import ReservedBook from '../pages/ReservedBook';
 
 const Layout = () => {
   return (
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: '/edit-book/:id_book',
         element: <EditBook />,
+      },
+      {
+        path: '/reserved-book',
+        element: <ReservedBook />,
       },
       // {
       //   path: '*',
