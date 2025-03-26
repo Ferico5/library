@@ -26,8 +26,8 @@ const borrowedBookSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["borrowed", "returned", "overdue"],
-    default: "borrowed",
+    enum: ["reserved", "borrowed", "returned", "overdue"],
+    default: "reserved",
   },
 });
 

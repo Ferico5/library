@@ -1,9 +1,10 @@
 const express = require('express');
-const { borrowBook, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook } = require('../controllers/BorrowedBookController.js');
+const { reserveBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook } = require('../controllers/BorrowedBookController.js');
 
 const router = express.Router();
 
-router.post('/borrow-book', borrowBook);
+router.post('/reserve-book', reserveBook);
+router.put('/reserve-book/:id', updateBorrowStatus);
 router.get('/history-borrow-book', getHistoryBorrowedBooks);
 router.get('/borrow-book', getBorrowedBook);
 router.get('/borrow-book/:id_borrower', getBorrowedBookByIdUser);

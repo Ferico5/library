@@ -2,7 +2,7 @@ const BorrowedBook = require('../models/BorrowedBookModel.js');
 const Book = require('../models/BookModel.js');
 const User = require('../models/UserModel.js');
 
-const borrowBook = async (req, res) => {
+const reserveBook = async (req, res) => {
   try {
     const { id_book, id_borrower } = req.body;
 
@@ -16,21 +16,52 @@ const borrowBook = async (req, res) => {
       return res.status(404).json({ msg: 'User not found!' });
     }
 
-    if (book.stock <= 0) {
-      return res.status(400).json({ msg: 'Book is out of stock!' });
-    }
-
-    // jika berhasil maka kurangi 1 dari stok
-    book.stock -= 1;
-    await book.save();
-
-    const newBorrow = new BorrowedBook({
+    const newReservation = new BorrowedBook({
       id_book,
       id_borrower,
+      status: 'reserved',
     });
 
-    await newBorrow.save();
-    res.status(201).json({ msg: 'Book borrowed successfully!', newBorrow });
+    await newReservation.save();
+    res.status(201).json({ msg: 'Book reserved successfully!', newReservation });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+const updateBorrowStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const borrowedBook = await BorrowedBook.findById(id);
+    if (!borrowedBook) {
+      return res.status(404).json({ msg: 'Borrow record not found!' });
+    }
+
+    if (status === 'borrowed') {
+      if (borrowedBook.status !== 'reserved') {
+        return res.status(400).json({ msg: 'Cannot change status to borrowed!' });
+      }
+
+      const book = await Book.findById(borrowedBook.id_book);
+      if (!book || book.stock <= 0) {
+        return res.status(400).json({ msg: 'Book is out of stock!' });
+      }
+
+      book.stock -= 1;
+      await book.save();
+
+      borrowedBook.status = 'borrowed';
+      borrowedBook.due_date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await borrowedBook.save();
+    } else {
+      borrowedBook.status = status;
+      await borrowedBook.save();
+    }
+
+    res.status(200).json({ msg: `Status updated to ${status}`, borrowedBook });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ msg: 'Server error' });
@@ -73,12 +104,15 @@ const getBorrowedBookByIdUser = async (req, res) => {
   try {
     const { id_borrower } = req.params;
 
+    const reservedBooks = await BorrowedBook.find({ id_borrower, status: 'reserved' }).populate('id_book', 'book_title author category');
+
     const borrowedBooks = await BorrowedBook.find({ id_borrower, status: 'borrowed' }).populate('id_book', 'book_title author category').sort({ borrowed_date: -1 });
 
     const returnedBooks = await BorrowedBook.find({ id_borrower, status: 'returned' }).populate('id_book', 'book_title author category').sort({ return_date: -1 });
 
     res.status(200).json({
       msg: 'Successfully retrieved borrowed books',
+      reserved: reservedBooks,
       borrowed: borrowedBooks,
       returned: returnedBooks,
     });
@@ -97,8 +131,8 @@ const returnBook = async (req, res) => {
       return res.status(404).json({ msg: 'Borrow record not found!' });
     }
 
-    if (borrowedBook.status === 'returned') {
-      return res.status(400).json({ msg: 'This book has already been returned!' });
+    if (borrowedBook.status !== 'borrowed') {
+      return res.status(400).json({ msg: 'Only borrowed books can be returned!' });
     }
 
     const book = await Book.findById(borrowedBook.id_book);
@@ -106,13 +140,13 @@ const returnBook = async (req, res) => {
       return res.status(404).json({ msg: 'Book record not found!' });
     }
 
-    borrowedBook.status = 'returned';
-    borrowedBook.return_date = new Date();
-
-    // kembalikan jumlah stok seperti semula
     book.stock += 1;
     await book.save();
+
+    borrowedBook.status = 'returned';
+    borrowedBook.return_date = new Date();
     await borrowedBook.save();
+
     res.status(200).json({ msg: 'Book returned successfully!', borrowedBook });
   } catch (error) {
     console.error(error.message);
@@ -120,4 +154,4 @@ const returnBook = async (req, res) => {
   }
 };
 
-module.exports = { borrowBook, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook };
+module.exports = { reserveBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook };
