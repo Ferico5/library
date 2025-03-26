@@ -7,6 +7,7 @@ import Dashboard from '../pages/Dashboard';
 import BookList from '../pages/BookList';
 import BorrowedBook from '../pages/BorrowedBook';
 import NewBook from '../pages/NewBook';
+import EditBook from '../pages/EditBook';
 
 // import components
 import Header from '../components/Header';
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: '/new-book',
         element: <NewBook />,
+      },
+      {
+        path: '/edit-book/:id_book',
+        element: <EditBook />,
       },
       // {
       //   path: '*',

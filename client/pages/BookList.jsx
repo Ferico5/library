@@ -55,7 +55,7 @@ const BookList = () => {
 
       setBooks((prevBooks) => {
         prevBooks.map((book) => {
-          book._id === id ? { stock: book.stock - 1 } : book;
+          book._id === id ? { ...book, stock: book.stock - 1 } : book;
         });
       });
 
@@ -83,7 +83,7 @@ const BookList = () => {
 
               {role === 'admin' ? (
                 <div className="mt-4 flex gap-2">
-                  <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white rounded w-1/2" onClick={() => alert('Update feature coming soon!')}>
+                  <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white rounded w-1/2" onClick={() => navigate(`/edit-book/${book._id}`)}>
                     ✏️ Update
                   </button>
                   <button className="px-4 py-2 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded w-1/2" onClick={() => handleDelete(book._id)}>

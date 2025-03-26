@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const NewBook = () => {
+  const navigate = useNavigate();
+
   const [book, setBook] = useState({
     book_title: '',
     author: '',
@@ -19,16 +22,17 @@ const NewBook = () => {
     e.preventDefault();
 
     if (!book.book_title || !book.author || !book.published_date || !book.category || !book.stock) {
-      setMessage('⚠️ Semua field harus diisi!');
+      setMessage('⚠️ All fields must be filled!');
       return;
     }
 
     try {
       await axios.post('http://localhost:8000/book', book);
       setBook({ book_title: '', author: '', published_date: '', category: '', stock: '' });
+      navigate('/book-list');
     } catch (error) {
       console.log(error.message);
-      setMessage('❌ Gagal menambahkan buku!');
+      setMessage('❌ Failed to Added New Book!');
     }
   };
 

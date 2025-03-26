@@ -34,11 +34,6 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/edit-book" className="hover:text-gray-400">
-                    Edit Book
-                  </Link>
-                </li>
-                <li>
                   <Link to="/overdue-book" className="hover:text-gray-400">
                     Overdue Book
                   </Link>
