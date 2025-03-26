@@ -30,6 +30,21 @@ const reserveBook = async (req, res) => {
   }
 };
 
+const getReservedBook = async (req, res) => {
+  try {
+    const reservedBooks = await BorrowedBook.find({ status: 'reserved' }).populate('id_book', 'book_title author').populate('id_borrower', 'full_name');
+
+    if (!reservedBooks) {
+      return res.status(404).json({ msg: 'Reserve record not found!' });
+    }
+
+    res.status(200).json({ msg: 'Successfully retrieved reserved books', reservedBooks });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
 const updateBorrowStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -87,18 +102,18 @@ const getHistoryBorrowedBooks = async (req, res) => {
   }
 };
 
-const getBorrowedBook = async (req, res) => {
-  try {
-    const borrowedBooks = await BorrowedBook.find({ status: { $ne: 'returned' } })
-      .populate('id_book', 'book_title author category')
-      .populate('id_borrower', 'full_name email');
+// const getBorrowedBook = async (req, res) => {
+//   try {
+//     const borrowedBooks = await BorrowedBook.find({ status: { $ne: 'returned', } })
+//       .populate('id_book', 'book_title author category')
+//       .populate('id_borrower', 'full_name email');
 
-    res.status(200).json(borrowedBooks);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: 'Server error' });
-  }
-};
+//     res.status(200).json(borrowedBooks);
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).json({ msg: 'Server error' });
+//   }
+// };
 
 const getBorrowedBookByIdUser = async (req, res) => {
   try {
@@ -154,4 +169,4 @@ const returnBook = async (req, res) => {
   }
 };
 
-module.exports = { reserveBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBook, getBorrowedBookByIdUser, returnBook };
+module.exports = { reserveBook, getReservedBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBookByIdUser, returnBook };
