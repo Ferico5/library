@@ -61,7 +61,7 @@ const BookList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-6 p-4">📚 Book List</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Books List</h1>
 
       {loading ? (
         <p className="text-center">Loading books...</p>

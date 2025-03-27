@@ -7,6 +7,18 @@ const BorrowedBook = () => {
   const [returnedBooks, setReturnedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const handleCancel = async (bookId) => {
+    if (window.confirm('Are you sure you want to cancel the reservation?')) {
+      try {
+        await axios.put(`http://localhost:8000/reserve-book/${bookId}`, { status: 'canceled' });
+        setReservedBooks(reservedBooks.filter((book) => book._id !== bookId))
+        alert('Reservation canceled successfully!');
+      } catch (error) {
+        console.error('Error canceling reservation:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userId = user._id;
@@ -48,6 +60,12 @@ const BorrowedBook = () => {
                     <h3 className="text-lg font-semibold mb-2">{book.id_book.book_title}</h3>
                     <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
                     <p className="text-yellow-400 font-semibold mb-1">Status: Reserved</p>
+                    <button
+                      onClick={() => handleCancel(book._id)}
+                      className="mt-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 hover:cursor-pointer transition"
+                    >
+                      Cancel Reservation
+                    </button>
                   </div>
                 ))}
               </div>
