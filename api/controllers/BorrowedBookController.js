@@ -71,6 +71,13 @@ const updateBorrowStatus = async (req, res) => {
       borrowedBook.status = 'borrowed';
       borrowedBook.due_date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       await borrowedBook.save();
+    } else if (status === 'canceled') {
+      if (borrowedBook.status !== 'reserved') {
+        return res.status(400).json({ msg: 'Only reserved books can be canceled!' });
+      }
+
+      borrowedBook.status = 'canceled';
+      await borrowedBook.save();
     } else {
       borrowedBook.status = status;
       await borrowedBook.save();
