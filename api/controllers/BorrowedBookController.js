@@ -132,11 +132,14 @@ const getBorrowedBookByIdUser = async (req, res) => {
 
     const returnedBooks = await BorrowedBook.find({ id_borrower, status: 'returned' }).populate('id_book', 'book_title author category').sort({ return_date: -1 });
 
+    const overdueBooks = await BorrowedBook.find({ id_borrower, status: 'overdue' }).populate('id_book', 'book_title author category');
+
     res.status(200).json({
       msg: 'Successfully retrieved borrowed books',
       reserved: reservedBooks,
       borrowed: borrowedBooks,
       returned: returnedBooks,
+      overdue: overdueBooks,
     });
   } catch (error) {
     console.error(error.message);
