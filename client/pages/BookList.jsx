@@ -45,23 +45,25 @@ const BookList = () => {
       return;
     }
 
-    try {
-      const response = await axios.post('http://localhost:8000/reserve-book', {
-        id_book: id,
-        id_borrower: userId,
-      });
+    if (window.confirm('Are you sure you want to reserve this book?')) {
+      try {
+        const response = await axios.post('http://localhost:8000/reserve-book', {
+          id_book: id,
+          id_borrower: userId,
+        });
 
-      alert(response.data.msg || 'Book reserved successfully!');
-      navigate('/borrowed-book');
-    } catch (error) {
-      console.error('Error borrowing book:', error);
-      alert(error.response?.data?.msg || 'Failed to borrow the book.');
+        alert(response.data.msg || 'Book reserved successfully!');
+        navigate('/borrowed-book');
+      } catch (error) {
+        console.error('Error borrowing book:', error);
+        alert(error.response?.data?.msg || 'Failed to borrow the book.');
+      }
     }
   };
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Books List</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Book List</h1>
 
       {loading ? (
         <p className="text-center">Loading books...</p>
