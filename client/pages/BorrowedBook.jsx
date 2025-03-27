@@ -5,13 +5,14 @@ const BorrowedBook = () => {
   const [reservedBooks, setReservedBooks] = useState([]);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [returnedBooks, setReturnedBooks] = useState([]);
+  const [overdueBooks, setOverdueBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const handleCancel = async (bookId) => {
     if (window.confirm('Are you sure you want to cancel the reservation?')) {
       try {
         await axios.put(`http://localhost:8000/reserve-book/${bookId}`, { status: 'canceled' });
-        setReservedBooks(reservedBooks.filter((book) => book._id !== bookId))
+        setReservedBooks(reservedBooks.filter((book) => book._id !== bookId));
         alert('Reservation canceled successfully!');
       } catch (error) {
         console.error('Error canceling reservation:', error);
@@ -34,6 +35,7 @@ const BorrowedBook = () => {
         setReservedBooks(response.data.reserved || []);
         setBorrowedBooks(response.data.borrowed || []);
         setReturnedBooks(response.data.returned || []);
+        setOverdueBooks(response.data.overdue || []);
         setLoading(false);
       })
       .catch((error) => {
@@ -60,10 +62,7 @@ const BorrowedBook = () => {
                     <h3 className="text-lg font-semibold mb-2">{book.id_book.book_title}</h3>
                     <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
                     <p className="text-yellow-400 font-semibold mb-1">Status: Reserved</p>
-                    <button
-                      onClick={() => handleCancel(book._id)}
-                      className="mt-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 hover:cursor-pointer transition"
-                    >
+                    <button onClick={() => handleCancel(book._id)} className="mt-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 hover:cursor-pointer transition">
                       Cancel Reservation
                     </button>
                   </div>
@@ -77,14 +76,25 @@ const BorrowedBook = () => {
           {/* Borrowed Books */}
           <section className="mb-10">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Currently Borrowed Books</h2>
-            {borrowedBooks.length > 0 ? (
+            {borrowedBooks.length > 0 || overdueBooks.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* status borrowed */}
                 {borrowedBooks.map((book) => (
                   <div key={book._id} className="border border-[#1E1E2E] p-4 rounded-lg shadow-md bg-[#2E2E3E] text-white">
                     <h3 className="text-lg font-semibold mb-2">{book.id_book.book_title}</h3>
                     <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
                     <p className="text-gray-300 mb-1">Borrowed on: {new Date(book.borrow_date).toLocaleDateString()}</p>
-                    <p className="text-red-400 font-semibold mb-1">Due date: {new Date(book.due_date).toLocaleDateString()}</p>
+                    <p className="text-yellow-400 font-semibold mb-1">Due date: {new Date(book.due_date).toLocaleDateString()}</p>
+                  </div>
+                ))}
+
+                {/* status overdue */}
+                {overdueBooks.map((book) => (
+                  <div key={book._id} className="border border-[#1E1E2E] p-4 rounded-lg shadow-md bg-[#2E2E3E] text-white">
+                    <h3 className="text-lg font-semibold mb-2">{book.id_book.book_title}</h3>
+                    <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
+                    <p className="text-gray-300 mb-1">Borrowed on: {new Date(book.borrow_date).toLocaleDateString()}</p>
+                    <p className="text-red-500 font-semibold mb-1">Status: Overdue</p>
                   </div>
                 ))}
               </div>
