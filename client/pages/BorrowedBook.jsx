@@ -53,7 +53,7 @@ const BorrowedBook = () => {
         .get('http://localhost:8000/history-borrow-book')
         .then((response) => {
           setHistory(response.data);
-          setFilteredHistory(response.data)
+          setFilteredHistory(response.data);
           setLoading(false);
         })
         .catch((error) => {
@@ -74,7 +74,9 @@ const BorrowedBook = () => {
             entry.id_book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
             entry.id_borrower.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             entry.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery)
+            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery) || 
+            new Date(entry.due_date).toLocaleDateString().includes(searchQuery) || 
+            new Date(entry.return_date).toLocaleDateString().includes(searchQuery)
         )
       );
     }
@@ -91,7 +93,7 @@ const BorrowedBook = () => {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">All Borrowed Books</h2>
           <div className="flex mb-4">
             <input type="text" placeholder="Search by title, author, borrower, status, or date" className="w-full p-2 border rounded" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-            <button onClick={handleFilter} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            <button onClick={handleFilter} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer">
               Filter
             </button>
           </div>
@@ -118,8 +120,8 @@ const BorrowedBook = () => {
                       <td className="py-2 px-4 border">{entry.id_book.author}</td>
                       <td className="py-2 px-4 border">{entry.id_borrower.full_name}</td>
                       <td className="py-2 px-4 border font-semibold text-{entry.status === 'overdue' ? 'red-500' : 'green-500'}">{entry.status}</td>
-                      <td className="py-2 px-4 border">{new Date(entry.borrow_date).toLocaleDateString()}</td>
-                      <td className="py-2 px-4 border">{new Date(entry.due_date).toLocaleDateString()}</td>
+                      <td className="py-2 px-4 border">{entry.borrow_date ? new Date(entry.borrow_date).toLocaleDateString() : '-'}</td>
+                      <td className="py-2 px-4 border">{entry.due_date ? new Date(entry.due_date).toLocaleDateString() : '-'}</td>
                       <td className="py-2 px-4 border">{entry.return_date ? new Date(entry.return_date).toLocaleDateString() : '-'}</td>
                     </tr>
                   ))
