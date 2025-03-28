@@ -26,6 +26,11 @@ const Header = () => {
                 Book List
               </Link>
             </li>
+            <li>
+              <Link to="/borrowed-book" className="hover:text-gray-400">
+                Borrowed Book
+              </Link>
+            </li>
             {user && user.role === 'admin' ? (
               <>
                 <li>
@@ -44,15 +49,7 @@ const Header = () => {
                   </Link>
                 </li>
               </>
-            ) : (
-              <>
-                <li>
-                  <Link to="/borrowed-book" className="hover:text-gray-400">
-                    Borrowed Book
-                  </Link>
-                </li>
-              </>
-            )}
+            ) : null}
             <li>
               <Link to="/change-profile" className="hover:text-gray-400">
                 Change Password

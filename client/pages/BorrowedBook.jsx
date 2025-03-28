@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../auth/AuthContext';
 
 const BorrowedBook = () => {
   const [reservedBooks, setReservedBooks] = useState([]);
@@ -7,6 +8,13 @@ const BorrowedBook = () => {
   const [returnedBooks, setReturnedBooks] = useState([]);
   const [overdueBooks, setOverdueBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [history, setHistory] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredHistory, setFilteredHistory] = useState([]);
+
+  const { user } = useAuth();
+  const userId = user._id;
+  const role = user.role || 'admin';
 
   const handleCancel = async (bookId) => {
     if (window.confirm('Are you sure you want to cancel the reservation?')) {
@@ -21,28 +29,56 @@ const BorrowedBook = () => {
   };
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const userId = user._id;
-
     if (!userId) {
       alert('User is not logged in. Please log in to see borrowed books.');
       return;
     }
 
-    axios
-      .get(`http://localhost:8000/borrow-book/${userId}`)
-      .then((response) => {
-        setReservedBooks(response.data.reserved || []);
-        setBorrowedBooks(response.data.borrowed || []);
-        setReturnedBooks(response.data.returned || []);
-        setOverdueBooks(response.data.overdue || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching borrowed books:', error);
-        setLoading(false);
-      });
+    if (role === 'user') {
+      axios
+        .get(`http://localhost:8000/borrow-book/${userId}`)
+        .then((response) => {
+          setReservedBooks(response.data.reserved || []);
+          setBorrowedBooks(response.data.borrowed || []);
+          setReturnedBooks(response.data.returned || []);
+          setOverdueBooks(response.data.overdue || []);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching borrowed books:', error);
+          setLoading(false);
+        });
+    } else if (role === 'admin') {
+      axios
+        .get('http://localhost:8000/history-borrow-book')
+        .then((response) => {
+          setHistory(response.data);
+          setFilteredHistory(response.data)
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching borrowed books:', error);
+          setLoading(false);
+        });
+    }
   }, []);
+
+  const handleFilter = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredHistory(history);
+    } else {
+      setFilteredHistory(
+        history.filter(
+          (entry) =>
+            entry.id_book.book_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            entry.id_book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            entry.id_borrower.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            entry.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery)
+        )
+      );
+    }
+  };
 
   return (
     <div className="container mx-auto p-6 bg-white min-h-screen">
@@ -50,6 +86,54 @@ const BorrowedBook = () => {
 
       {loading ? (
         <p className="text-center text-gray-600">Loading borrowed books...</p>
+      ) : role === 'admin' ? (
+        <section>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">All Borrowed Books</h2>
+          <div className="flex mb-4">
+            <input type="text" placeholder="Search by title, author, borrower, status, or date" className="w-full p-2 border rounded" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <button onClick={handleFilter} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Filter
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="py-2 px-4 border">No</th>
+                  <th className="py-2 px-4 border">Book Title</th>
+                  <th className="py-2 px-4 border">Author</th>
+                  <th className="py-2 px-4 border">Borrower</th>
+                  <th className="py-2 px-4 border">Status</th>
+                  <th className="py-2 px-4 border">Borrow Date</th>
+                  <th className="py-2 px-4 border">Due Date</th>
+                  <th className="py-2 px-4 border">Return Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredHistory.length > 0 ? (
+                  filteredHistory.map((entry, index) => (
+                    <tr key={entry._id} className="border">
+                      <td className="py-2 px-4 border text-center">{index + 1}</td>
+                      <td className="py-2 px-4 border">{entry.id_book.book_title}</td>
+                      <td className="py-2 px-4 border">{entry.id_book.author}</td>
+                      <td className="py-2 px-4 border">{entry.id_borrower.full_name}</td>
+                      <td className="py-2 px-4 border font-semibold text-{entry.status === 'overdue' ? 'red-500' : 'green-500'}">{entry.status}</td>
+                      <td className="py-2 px-4 border">{new Date(entry.borrow_date).toLocaleDateString()}</td>
+                      <td className="py-2 px-4 border">{new Date(entry.due_date).toLocaleDateString()}</td>
+                      <td className="py-2 px-4 border">{entry.return_date ? new Date(entry.return_date).toLocaleDateString() : '-'}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4 text-gray-600">
+                      No borrowing history found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       ) : (
         <>
           {/* Reserved Books */}
