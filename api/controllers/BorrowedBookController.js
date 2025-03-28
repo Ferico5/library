@@ -20,6 +20,8 @@ const reserveBook = async (req, res) => {
       id_book,
       id_borrower,
       status: 'reserved',
+      borrow_date: null,
+      due_date: null,
     });
 
     await newReservation.save();
@@ -69,6 +71,7 @@ const updateBorrowStatus = async (req, res) => {
       await book.save();
 
       borrowedBook.status = 'borrowed';
+      borrowedBook.borrow_date = new Date(Date.now());
       borrowedBook.due_date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       await borrowedBook.save();
     } else if (status === 'canceled') {
@@ -94,9 +97,8 @@ const getHistoryBorrowedBooks = async (req, res) => {
   try {
     const borrowedBooks = await BorrowedBook.find().populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
 
-    // Update status overdue jika due_date sudah terlewati
     borrowedBooks.forEach(async (borrow) => {
-      if (!borrow.return_date && new Date() > borrow.due_date) {
+      if (borrow.status === 'borrowed' && borrow.due_date && new Date() > borrow.due_date && !borrow.return_date) {
         borrow.status = 'overdue';
         await borrow.save();
       }
