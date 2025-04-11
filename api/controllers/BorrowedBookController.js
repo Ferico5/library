@@ -111,18 +111,27 @@ const getHistoryBorrowedBooks = async (req, res) => {
   }
 };
 
-// const getBorrowedBook = async (req, res) => {
-//   try {
-//     const borrowedBooks = await BorrowedBook.find({ status: { $ne: 'returned', } })
-//       .populate('id_book', 'book_title author category')
-//       .populate('id_borrower', 'full_name email');
+const getBorrowedBook = async (req, res) => {
+  try {
+    const borrowedBooks = await BorrowedBook.find({ status: 'borrowed' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
 
-//     res.status(200).json(borrowedBooks);
-//   } catch (error) {
-//     console.error(error.message);
-//     res.status(500).json({ msg: 'Server error' });
-//   }
-// };
+    res.status(200).json(borrowedBooks);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+const getOverdueBook = async (req, res) => {
+  try {
+    const overdueBooks = await BorrowedBook.find({ status: 'overdue' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
+
+    res.status(200).json(overdueBooks);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
 
 const getBorrowedBookByIdUser = async (req, res) => {
   try {
@@ -181,4 +190,4 @@ const returnBook = async (req, res) => {
   }
 };
 
-module.exports = { reserveBook, getReservedBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBookByIdUser, returnBook };
+module.exports = { reserveBook, getReservedBook, updateBorrowStatus, getHistoryBorrowedBooks, getBorrowedBook, getOverdueBook, getBorrowedBookByIdUser, returnBook };
