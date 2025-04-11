@@ -1,9 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useAuth } from '../auth/AuthContext';
 
 const Dashboard = () => {
+  const [totalBooks, setTotalBooks] = useState('');
+  const [borrowedBooks, setBorrowedBooks] = useState([]);
+  const [overdueBooks, setOverdueBooks] = useState([]);
+
   const { user } = useAuth();
   const role = user.role || 'user';
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8000/book')
+      .then((response) => {
+        setTotalBooks(response.data.getBook);
+      })
+      .catch((error) => {
+        console.error('Error fecthing books:', error);
+      });
+  });
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8000/borrow-book')
+      .then((response) => {
+        setBorrowedBooks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching books:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8000/overdue-book')
+      .then((response) => {
+        setOverdueBooks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching books:', error);
+      });
+  }, []);
 
   return (
     <div className="flex">
@@ -11,28 +49,28 @@ const Dashboard = () => {
       <div className="px-4 pt-3 mt-5 ml-5 w-full">
         <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">📚 {role === 'admin' ? 'Admin' : 'User'} Dashboard</h2>
 
-        {role === 'admin' ? <AdminDashboard /> : <UserDashboard />}
+        {role === 'admin' ? <AdminDashboard totalBooks={totalBooks} borrowedBooks={borrowedBooks} overdueBooks={overdueBooks} /> : <UserDashboard />}
       </div>
     </div>
   );
 };
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ totalBooks, borrowedBooks, overdueBooks }) => {
   return (
     <>
       {/* Quick Summary */}
       <div className="flex gap-4">
         <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
           <h5 className="text-lg font-semibold">Total Books</h5>
-          <p className="text-xl">1,250</p>
+          <p className="text-xl">{totalBooks.length}</p>
         </div>
         <div className="bg-green-500 text-white p-6 rounded-lg shadow-md">
           <h5 className="text-lg font-semibold">Borrowed Books</h5>
-          <p className="text-xl">300</p>
+          <p className="text-xl">{borrowedBooks.length}</p>
         </div>
         <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md">
           <h5 className="text-lg font-semibold">Overdue Books</h5>
-          <p className="text-xl">15</p>
+          <p className="text-xl">{overdueBooks.length}</p>
         </div>
       </div>
 
@@ -50,18 +88,14 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
-              <td className="p-3 border border-gray-700">Harry Potter</td>
-              <td className="p-3 border border-gray-700">John Doe</td>
-              <td className="p-3 border border-gray-700">2025-03-10</td>
-              <td className="p-3 border border-gray-700">2025-03-20</td>
-            </tr>
-            <tr className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
-              <td className="p-3 border border-gray-700">The Hobbit</td>
-              <td className="p-3 border border-gray-700">Jane Smith</td>
-              <td className="p-3 border border-gray-700">2025-03-08</td>
-              <td className="p-3 border border-gray-700">2025-03-18</td>
-            </tr>
+            {borrowedBooks.map((book) => (
+              <tr key={book._id} className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
+                <td className="p-3 border border-gray-700">{book.id_book.book_title}</td>
+                <td className="p-3 border border-gray-700">{book.id_borrower.full_name}</td>
+                <td className="p-3 border border-gray-700">{book.borrow_date.slice(0, 10)}</td>
+                <td className="p-3 border border-gray-700">{book.due_date.slice(0, 10)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -79,11 +113,13 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
-              <td className="p-3 border border-gray-700">1984</td>
-              <td className="p-3 border border-gray-700">Michael Brown</td>
-              <td className="p-3 border border-gray-700 text-red-400 font-semibold">2025-03-05</td>
-            </tr>
+            {overdueBooks.map((book) => (
+              <tr className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
+                <td className="p-3 border border-gray-700">{book.id_book.book_title}</td>
+                <td className="p-3 border border-gray-700">{book.id_borrower.full_name}</td>
+                <td className="p-3 border border-gray-700 text-red-400 font-semibold">{book.due_date.slice(0, 10)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
