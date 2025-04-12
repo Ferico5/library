@@ -148,6 +148,7 @@ const AdminDashboard = () => {
 const UserDashboard = ({ userId }) => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [overdueBooks, setOverdueBooks] = useState([]);
+  const [reservedBooks, setReservedBooks] = useState([]);
 
   useEffect(() => {
     if (!userId) {
@@ -159,6 +160,7 @@ const UserDashboard = ({ userId }) => {
       .then((response) => {
         setBorrowedBooks(response.data.borrowed);
         setOverdueBooks(response.data.overdue);
+        setReservedBooks(response.data.reserved);
       })
       .catch((error) => {
         console.error('Error fetching book:', error);
@@ -187,7 +189,7 @@ const UserDashboard = ({ userId }) => {
 
       <div className="mt-4 overflow-x-auto">
         {borrowedBooks.length === 0 && overdueBooks.length === 0 ? (
-          <p className="text-gray-400 mt-2">You haven't borrowed any books yet.</p>
+          <p className="ml-8.5 text-gray-400 mt-2">You haven't borrowed any books yet.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-700">
             <thead className="bg-gray-700 text-white">
@@ -223,8 +225,19 @@ const UserDashboard = ({ userId }) => {
       {/* User's Notifications */}
       <h4 className="mt-6 text-xl font-semibold flex items-center gap-2 text-blue-400">🔔 Notifications</h4>
       <ul className="mt-4 space-y-3">
-        <li className="bg-gray-800 text-gray-300 px-4 py-3 rounded-lg flex items-center gap-2 border border-gray-700">📌 "Atomic Habits" is overdue. Please return it ASAP!</li>
-        <li className="bg-gray-800 text-gray-300 px-4 py-3 rounded-lg flex items-center gap-2 border border-gray-700">✅ Your reservation for "The Psychology of Money" is confirmed.</li>
+        {overdueBooks.map((book) => (
+          <li key={book._id} className="bg-gray-800 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-red-600">
+            ⚠️ <span className="font-medium">"{book.id_book.book_title}"</span> is overdue. Please return it ASAP!
+          </li>
+        ))}
+
+        {reservedBooks.map((book) => (
+          <li key={book._id} className="bg-gray-800 text-green-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-green-600">
+            ✅ Your reservation for <span className="font-medium">"{book.id_book.book_title}"</span> is confirmed. Please come to the library to take the book.
+          </li>
+        ))}
+
+        {overdueBooks.length === 0 && reservedBooks.length === 0 && <li className="ml-8.5 text-gray-400">No notifications at the moment. You're all caught up!</li>}
       </ul>
 
       {/* Quick Actions for Users */}
