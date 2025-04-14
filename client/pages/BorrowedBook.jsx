@@ -63,24 +63,26 @@ const BorrowedBook = () => {
     }
   }, []);
 
-  const handleFilter = () => {
-    if (searchQuery.trim() === '') {
-      setFilteredHistory(history);
-    } else {
-      setFilteredHistory(
-        history.filter(
-          (entry) =>
-            entry.id_book.book_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            entry.id_book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            entry.id_borrower.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            entry.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery) ||
-            new Date(entry.due_date).toLocaleDateString().includes(searchQuery) ||
-            new Date(entry.return_date).toLocaleDateString().includes(searchQuery)
-        )
-      );
+  useEffect(() => {
+    if (role === 'admin') {
+      if (searchQuery.trim() === '') {
+        setFilteredHistory(history);
+      } else {
+        setFilteredHistory(
+          history.filter(
+            (entry) =>
+              entry.id_book.book_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              entry.id_book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              entry.id_borrower.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              entry.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery) ||
+              new Date(entry.due_date).toLocaleDateString().includes(searchQuery) ||
+              new Date(entry.return_date).toLocaleDateString().includes(searchQuery)
+          )
+        );
+      }
     }
-  };
+  }, [searchQuery, history, role]);
 
   const handleReturnBook = async (bookId) => {
     if (window.confirm('Are you sure you want to return this book?')) {
@@ -112,9 +114,6 @@ const BorrowedBook = () => {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">All Borrowed Books</h2>
           <div className="flex mb-4">
             <input type="text" placeholder="Search by title, author, borrower, status, or date" className="w-full p-2 border rounded" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-            <button onClick={handleFilter} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer">
-              Filter
-            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-300">
