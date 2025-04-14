@@ -36,7 +36,7 @@ const BookList = () => {
     }
   };
 
-  const handleReservation = async (id) => {
+  const handleReservation = async (book) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userId = user._id;
 
@@ -45,10 +45,15 @@ const BookList = () => {
       return;
     }
 
+    if (book.stock === 0) {
+      alert('❗The book is currently out of stock. Please wait until it is back in stock.');
+      return;
+    }
+
     if (window.confirm('Are you sure you want to reserve this book?')) {
       try {
         const response = await axios.post('http://localhost:8000/reserve-book', {
-          id_book: id,
+          id_book: book._id,
           id_borrower: userId,
         });
 
@@ -86,7 +91,7 @@ const BookList = () => {
                   </button>
                 </div>
               ) : (
-                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book._id)}>
+                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book)}>
                   📖 Reservation
                 </button>
               )}
