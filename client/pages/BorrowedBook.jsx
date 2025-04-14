@@ -74,11 +74,30 @@ const BorrowedBook = () => {
             entry.id_book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
             entry.id_borrower.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             entry.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery) || 
-            new Date(entry.due_date).toLocaleDateString().includes(searchQuery) || 
+            new Date(entry.borrow_date).toLocaleDateString().includes(searchQuery) ||
+            new Date(entry.due_date).toLocaleDateString().includes(searchQuery) ||
             new Date(entry.return_date).toLocaleDateString().includes(searchQuery)
         )
       );
+    }
+  };
+
+  const handleReturnBook = async (bookId) => {
+    if (window.confirm('Are you sure you want to return this book?')) {
+      try {
+        const response = await axios.put(`http://localhost:8000/borrow-book/${bookId}`, {
+          return_date: new Date().toISOString(),
+        });
+
+        alert(response.data.msg || 'Book returned successfully!');
+
+        const updatedHistory = history.map((entry) => (entry._id === bookId ? { ...entry, status: 'returned', return_date: new Date() } : entry));
+        setHistory(updatedHistory);
+        setFilteredHistory(updatedHistory);
+      } catch (error) {
+        console.error('Error returning book:', error);
+        alert('Failed to return the book.');
+      }
     }
   };
 
@@ -109,6 +128,7 @@ const BorrowedBook = () => {
                   <th className="py-2 px-4 border">Borrow Date</th>
                   <th className="py-2 px-4 border">Due Date</th>
                   <th className="py-2 px-4 border">Return Date</th>
+                  <th className="py-2 px-4 border">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -123,11 +143,23 @@ const BorrowedBook = () => {
                       <td className="py-2 px-4 border">{entry.borrow_date ? new Date(entry.borrow_date).toLocaleDateString() : '-'}</td>
                       <td className="py-2 px-4 border">{entry.due_date ? new Date(entry.due_date).toLocaleDateString() : '-'}</td>
                       <td className="py-2 px-4 border">{entry.return_date ? new Date(entry.return_date).toLocaleDateString() : '-'}</td>
+                      <td className="py-2 px-4 border text-center">
+                        {entry.status === 'borrowed' || entry.status === 'overdue' ? (
+                          <button
+                            onClick={() => handleReturnBook(entry._id)}
+                            className={`px-3 py-1 ${entry.status === 'overdue' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} font-semibold text-white rounded transition hover:cursor-pointer`}
+                          >
+                            Return Book
+                          </button>
+                        ) : (
+                          <span className="text-gray-500 italic">No action required</span>
+                        )}
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center py-4 text-gray-600">
+                    <td colSpan="9" className="text-center py-4 text-gray-600">
                       No borrowing history found.
                     </td>
                   </tr>
