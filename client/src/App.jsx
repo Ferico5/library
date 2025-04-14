@@ -1,5 +1,6 @@
 // import { useState } from 'react'
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // import pages
 import Auth from '../pages/Auth';
@@ -37,31 +38,59 @@ const router = createBrowserRouter([
       },
       {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/book-list',
-        element: <BookList />,
+        element: (
+          <ProtectedRoute>
+            <BookList />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/borrowed-book',
-        element: <BorrowedBook />,
+        element: (
+          <ProtectedRoute>
+            <BorrowedBook />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/new-book',
-        element: <NewBook />,
+        element: (
+          <ProtectedRoute>
+            <NewBook />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/edit-book/:id_book',
-        element: <EditBook />,
+        element: (
+          <ProtectedRoute>
+            <EditBook />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/reserved-book',
-        element: <ReservedBook />,
+        element: (
+          <ProtectedRoute>
+            <ReservedBook />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/overdue-book',
-        element: <OverdueBook />,
+        element: (
+          <ProtectedRoute>
+            <OverdueBook />
+          </ProtectedRoute>
+        ),
       },
       // {
       //   path: '*',
