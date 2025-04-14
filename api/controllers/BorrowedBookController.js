@@ -81,6 +81,20 @@ const updateBorrowStatus = async (req, res) => {
 
       borrowedBook.status = 'canceled';
       await borrowedBook.save();
+    } else if (status === 'returned') {
+      if (borrowedBook.status !== 'borrowed' && borrowedBook.status !== 'overdue') {
+        return res.status(400).json({ msg: 'Only borrowed or overdue books can be returned!' });
+      }
+
+      const book = await Book.findById(borrowedBook.id_book);
+      if (book) {
+        book.stock += 1;
+        await book.save();
+      }
+
+      borrowedBook.status = 'returned';
+      borrowedBook.return_date = return_date ? new Date(return_date) : new Date();
+      await borrowedBook.save();
     } else {
       borrowedBook.status = status;
       await borrowedBook.save();
@@ -167,8 +181,8 @@ const returnBook = async (req, res) => {
       return res.status(404).json({ msg: 'Borrow record not found!' });
     }
 
-    if (borrowedBook.status !== 'borrowed') {
-      return res.status(400).json({ msg: 'Only borrowed books can be returned!' });
+    if (borrowedBook.status !== 'borrowed' && borrowedBook.status !== 'overdue') {
+      return res.status(400).json({ msg: 'Only borrowed or overdue books can be returned!' });
     }
 
     const book = await Book.findById(borrowedBook.id_book);
