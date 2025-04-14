@@ -34,11 +34,6 @@ const Header = () => {
             {user && user.role === 'admin' ? (
               <>
                 <li>
-                  <Link to="/new-book" className="hover:text-gray-400">
-                    New Book
-                  </Link>
-                </li>
-                <li>
                   <Link to="/reserved-book" className="hover:text-gray-400">
                     Reserved Book
                   </Link>

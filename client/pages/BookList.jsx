@@ -36,7 +36,7 @@ const BookList = () => {
     }
   };
 
-  const handleReservation = async (book) => {
+  const handleReservation = async (id) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userId = user._id;
 
@@ -45,15 +45,10 @@ const BookList = () => {
       return;
     }
 
-    if (book.stock === 0) {
-      alert('❗The book is currently out of stock. Please wait until it is back in stock.');
-      return;
-    }
-
     if (window.confirm('Are you sure you want to reserve this book?')) {
       try {
         const response = await axios.post('http://localhost:8000/reserve-book', {
-          id_book: book._id,
+          id_book: id,
           id_borrower: userId,
         });
 
@@ -68,7 +63,14 @@ const BookList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Book List</h1>
+      <div className="relative mb-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Book List</h1>
+        {role === 'admin' && (
+          <button className="absolute right-0 top-0 border bg-blue-400 rounded-lg text-sm p-2 font-bold text-gray-800 hover:bg-blue-500 hover:cursor-pointer" onClick={() => navigate('/new-book')}>
+            ➕ New Book
+          </button>
+        )}
+      </div>
 
       {loading ? (
         <p className="text-center">Loading books...</p>
@@ -91,7 +93,7 @@ const BookList = () => {
                   </button>
                 </div>
               ) : (
-                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book)}>
+                <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book._id)}>
                   📖 Reservation
                 </button>
               )}
