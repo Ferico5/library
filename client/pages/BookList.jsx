@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext';
 const BookList = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { user } = useAuth();
   const role = user.role || 'user';
@@ -61,6 +62,10 @@ const BookList = () => {
     }
   };
 
+  const filteredBooks = books.filter(
+    (book) => book.book_title.toLowerCase().includes(searchQuery.toLowerCase()) || book.author.toLowerCase().includes(searchQuery.toLowerCase()) || book.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="container mx-auto p-6">
       <div className="relative mb-6">
@@ -72,11 +77,17 @@ const BookList = () => {
         )}
       </div>
 
+      {role === 'user' && (
+        <div className="flex mb-4">
+          <input type="text" placeholder="Search by title, author, or category" className="w-full p-2 border rounded" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+        </div>
+      )}
+
       {loading ? (
         <p className="text-center">Loading books...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.map((book) => (
+          {filteredBooks.map((book) => (
             <div key={book._id} className="border border-[#1E1E2E] p-4 rounded-lg shadow-md bg-[#2E2E3E] text-white">
               <h2 className="text-xl font-semibold mb-2">{book.book_title}</h2>
               <p className="text-gray-300 mb-1">Author: {book.author}</p>
