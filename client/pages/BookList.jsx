@@ -105,7 +105,7 @@ const BookList = () => {
                 </div>
               ) : (
                 <button className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white rounded w-full" onClick={() => handleReservation(book._id)}>
-                  📖 Reservation
+                  📖 Reserve
                 </button>
               )}
             </div>

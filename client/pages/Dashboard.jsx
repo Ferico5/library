@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -149,6 +150,14 @@ const UserDashboard = ({ userId }) => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [overdueBooks, setOverdueBooks] = useState([]);
   const [reservedBooks, setReservedBooks] = useState([]);
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
+  const [stats, setStats] = useState({
+    totalBorrowed: 0,
+    totalReserved: 0,
+    totalOverdue: 0,
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) {
@@ -161,9 +170,27 @@ const UserDashboard = ({ userId }) => {
         setBorrowedBooks(response.data.borrowed);
         setOverdueBooks(response.data.overdue);
         setReservedBooks(response.data.reserved);
+        setStats({
+          totalBorrowed: response.data.borrowed.length,
+          totalReserved: response.data.reserved.length,
+          totalOverdue: response.data.overdue.length,
+        });
       })
       .catch((error) => {
         console.error('Error fetching book:', error);
+      });
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    axios
+      .get(`http://localhost:8000/recommendation/${userId}`)
+      .then((res) => {
+        setRecommendedBooks(res.data.recommendedBooks);
+      })
+      .catch((err) => {
+        console.error('Error fetching recommended books:', err);
       });
   }, [userId]);
 
@@ -182,14 +209,95 @@ const UserDashboard = ({ userId }) => {
     }
   };
 
+  const getUpcomingDueBook = () => {
+    const upcoming = [...borrowedBooks, ...overdueBooks].filter((b) => b.status === 'borrowed').sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+    return upcoming[0];
+  };
+
+  const handleReservation = async (id) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user._id;
+
+    if (!userId) {
+      alert('User is not logged in. Please log in to borrow a book.');
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to reserve this book?')) {
+      try {
+        const response = await axios.post('http://localhost:8000/reserve-book', {
+          id_book: id,
+          id_borrower: userId,
+        });
+
+        alert(response.data.msg || 'Book reserved successfully!');
+        navigate('/borrowed-book');
+      } catch (error) {
+        console.error('Error borrowing book:', error);
+        alert(error.response?.data?.msg || 'Failed to borrow the book.');
+      }
+    }
+  };
+
   return (
     <>
+      <div className="flex gap-4 my-4">
+        <div className="bg-indigo-600 text-white p-4 rounded-lg shadow-md w-1/3 text-center">
+          <h5 className="text-md font-semibold">Total Borrowed</h5>
+          <p className="text-xl font-bold">{stats.totalBorrowed}</p>
+        </div>
+        <div className="bg-red-600 text-white p-4 rounded-lg shadow-md w-1/3 text-center">
+          <h5 className="text-md font-semibold">Overdue</h5>
+          <p className="text-xl font-bold">{stats.totalOverdue}</p>
+        </div>
+        <div className="bg-green-600 text-white p-4 rounded-lg shadow-md w-1/3 text-center">
+          <h5 className="text-md font-semibold">Reserved</h5>
+          <p className="text-xl font-bold">{stats.totalReserved}</p>
+        </div>
+      </div>
+
+      {/* Upcoming Due Date */}
+      <div className="mt-4 bg-yellow-300 text-gray-900 px-4 py-3 rounded-lg shadow-md w-fit">
+        <h4 className="text-md font-semibold mb-1">⏰ Upcoming Due Date</h4>
+        {getUpcomingDueBook() ? (
+          <p className="text-sm">
+            <strong>{getUpcomingDueBook().id_book.book_title}</strong> is due on <strong>{getUpcomingDueBook().due_date.slice(0, 10)}</strong>. Don’t forget to return it on time! 📅
+          </p>
+        ) : (
+          <p className="text-sm">You don’t have any upcoming due books right now. Chill. 😌</p>
+        )}
+      </div>
+
+      {/* Recommended Books Section */}
+      <h4 className="mt-6 text-xl font-semibold flex items-center gap-2 text-purple-400">💡 Recommended for You</h4>
+
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {recommendedBooks.length === 0 ? (
+          <p className="text-gray-400 w-250">No recommendations available right now. Try borrowing some books to get personalized suggestions! 😉</p>
+        ) : (
+          recommendedBooks.map((book) => (
+            <div key={book._id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-600">
+              <h5 className="text-lg font-semibold">{book.book_title}</h5>
+              <p className="text-sm text-gray-400 mt-2">
+                Author: <span className="text-indigo-300">{book.author}</span>
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                Category: <span className="text-indigo-300">{book.category}</span>
+              </p>
+              <button className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-1 px-3 rounded-md hover:cursor-pointer" onClick={() => handleReservation(book._id)}>
+                📖 Reserve
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* User's Borrowed Books */}
       <h4 className="mt-6 text-xl font-semibold flex items-center gap-2">📌 Your Borrowed Books</h4>
 
       <div className="mt-4 overflow-x-auto">
         {borrowedBooks.length === 0 && overdueBooks.length === 0 ? (
-          <p className="ml-8.5 border bg-gray-700 text-white py-2 px-3">You haven't borrowed any books yet.</p>
+          <p className="border bg-gray-700 text-white py-2 px-3">You haven't borrowed any books yet.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-700">
             <thead className="bg-gray-700 text-white">
@@ -226,18 +334,18 @@ const UserDashboard = ({ userId }) => {
       <h4 className="mt-6 text-xl font-semibold flex items-center gap-2 text-blue-400">🔔 Notifications</h4>
       <ul className="mt-4 space-y-3">
         {overdueBooks.map((book) => (
-          <li key={book._id} className="bg-gray-800 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-red-600">
+          <li key={book._id} className="bg-gray-800 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-red-600 mb-2">
             ⚠️ <span className="font-medium">"{book.id_book.book_title}"</span> is overdue. Please return it ASAP!
           </li>
         ))}
 
         {reservedBooks.map((book) => (
-          <li key={book._id} className="bg-gray-800 text-green-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-green-600">
+          <li key={book._id} className="bg-gray-800 text-green-400 px-4 py-3 rounded-lg flex items-center gap-2 border border-green-600 mb-2">
             ✅ Your reservation for <span className="font-medium">"{book.id_book.book_title}"</span> is confirmed. Please come to the library to take the book.
           </li>
         ))}
 
-        {overdueBooks.length === 0 && reservedBooks.length === 0 && <li className="ml-8.5 border bg-gray-700 text-white py-2 px-3">No notifications at the moment. You're all caught up!</li>}
+        {overdueBooks.length === 0 && reservedBooks.length === 0 && <li className="border bg-gray-700 text-white py-2 px-3 mb-2">No notifications at the moment. You're all caught up!</li>}
       </ul>
     </>
   );
