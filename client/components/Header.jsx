@@ -8,7 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[#1E1E2E] text-white flex justify-between items-center px-10 shadow-lg fixed w-full">
+    <div className="bg-[#1E1E2E] text-white flex justify-between items-center px-10 shadow-lg fixed w-full top-0">
       {/* Logo */}
       <img src={libraryLogo} alt="icon" className="w-24" />
 

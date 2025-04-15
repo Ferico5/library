@@ -37,7 +37,7 @@ const NewBook = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-gray-800 p-6 rounded-lg shadow-lg text-white">
+    <div className="max-w-lg mx-auto mt-30 mb-5 bg-gray-800 p-6 rounded-lg shadow-lg text-white">
       <h2 className="text-2xl font-semibold mb-6 text-center">📚 Add New Book</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

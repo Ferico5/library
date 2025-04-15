@@ -65,7 +65,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#313244] to-[#1E1E2E] w-2/3 m-auto flex flex-col justify-center text-white mt-10 px-5 py-3 rounded-lg shadow-lg">
+    <div className="bg-gradient-to-b from-[#313244] to-[#1E1E2E] w-2/3 m-auto flex flex-col justify-center text-white mt-30 px-5 py-3 rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-white mb-6 text-center">{isLogin ? 'Login' : 'Create An Account'}</h1>
 
       <form onSubmit={handleLogin}>
