@@ -109,7 +109,7 @@ const updateBorrowStatus = async (req, res) => {
 
 const getHistoryBorrowedBooks = async (req, res) => {
   try {
-    const borrowedBooks = await BorrowedBook.find().populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
+    const borrowedBooks = await BorrowedBook.find().populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email mobile_number');
 
     borrowedBooks.forEach(async (borrow) => {
       if (borrow.status === 'borrowed' && borrow.due_date && new Date() > borrow.due_date && !borrow.return_date) {
@@ -127,7 +127,7 @@ const getHistoryBorrowedBooks = async (req, res) => {
 
 const getBorrowedBook = async (req, res) => {
   try {
-    const borrowedBooks = await BorrowedBook.find({ status: 'borrowed' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
+    const borrowedBooks = await BorrowedBook.find({ status: 'borrowed' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email mobile_number');
 
     res.status(200).json(borrowedBooks);
   } catch (error) {
@@ -138,7 +138,7 @@ const getBorrowedBook = async (req, res) => {
 
 const getOverdueBook = async (req, res) => {
   try {
-    const overdueBooks = await BorrowedBook.find({ status: 'overdue' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email');
+    const overdueBooks = await BorrowedBook.find({ status: 'overdue' }).populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email mobile_number');
 
     res.status(200).json(overdueBooks);
   } catch (error) {
