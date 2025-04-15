@@ -24,6 +24,8 @@ const AdminDashboard = () => {
   const [totalBooks, setTotalBooks] = useState('');
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [overdueBooks, setOverdueBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     axios
@@ -58,19 +60,41 @@ const AdminDashboard = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (showModal) {
+      const handleClickOutside = (event) => {
+        const modal = document.getElementById('modal');
+        if (modal && !modal.contains(event.target)) {
+          setShowModal(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showModal]);
+
+  const handleShowDetail = (book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  };
+
   return (
     <>
       {/* Quick Summary */}
       <div className="flex gap-4">
-        <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
+        <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md w-1/3 text-center">
           <h5 className="text-lg font-semibold">Total Books</h5>
           <p className="text-xl">{totalBooks.length}</p>
         </div>
-        <div className="bg-green-500 text-white p-6 rounded-lg shadow-md">
+        <div className="bg-green-500 text-white p-6 rounded-lg shadow-md w-1/3 text-center">
           <h5 className="text-lg font-semibold">Borrowed Books</h5>
           <p className="text-xl">{borrowedBooks.length}</p>
         </div>
-        <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md">
+        <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md w-1/3 text-center">
           <h5 className="text-lg font-semibold">Overdue Books</h5>
           <p className="text-xl">{overdueBooks.length}</p>
         </div>
@@ -81,7 +105,7 @@ const AdminDashboard = () => {
 
       <div className="mt-4 overflow-x-auto">
         {borrowedBooks.length === 0 ? (
-          <p className="text-gray-400 mt-2">No borrowed books found.</p>
+          <p className="mt-2 border bg-gray-700 text-white py-2 px-3">No borrowed books found.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-700">
             <thead>
@@ -90,6 +114,7 @@ const AdminDashboard = () => {
                 <th className="p-3 text-left border border-gray-700">Borrower</th>
                 <th className="p-3 text-left border border-gray-700">Borrow Date</th>
                 <th className="p-3 text-left border border-gray-700">Due Date</th>
+                <th className="p-3 text-left border border-gray-700">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -99,6 +124,11 @@ const AdminDashboard = () => {
                   <td className="p-3 border border-gray-700">{book.id_borrower.full_name}</td>
                   <td className="p-3 border border-gray-700">{book.borrow_date.slice(0, 10)}</td>
                   <td className="p-3 border border-gray-700">{book.due_date.slice(0, 10)}</td>
+                  <td className="p-3 border border-gray-700">
+                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md hover:cursor-pointer" onClick={() => handleShowDetail(book)}>
+                      Show Detail
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -111,7 +141,7 @@ const AdminDashboard = () => {
 
       <div className="mt-4 overflow-x-auto">
         {overdueBooks.length === 0 ? (
-          <p className="text-gray-400 mt-2">No overdue books found.</p>
+          <p className="mt-2 border bg-gray-700 text-white py-2 px-3">No overdue books found.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-700">
             <thead className="bg-red-600 text-white">
@@ -119,14 +149,20 @@ const AdminDashboard = () => {
                 <th className="p-3 text-left border border-gray-700">Book Title</th>
                 <th className="p-3 text-left border border-gray-700">Borrower</th>
                 <th className="p-3 text-left border border-gray-700">Due Date</th>
+                <th className="p-3 text-left border border-gray-700">Action</th>
               </tr>
             </thead>
             <tbody>
               {overdueBooks.map((book) => (
-                <tr className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
+                <tr key={book._id} className="odd:bg-gray-900 even:bg-gray-800 text-gray-200">
                   <td className="p-3 border border-gray-700">{book.id_book.book_title}</td>
                   <td className="p-3 border border-gray-700">{book.id_borrower.full_name}</td>
                   <td className="p-3 border border-gray-700 text-red-400 font-semibold">{book.due_date.slice(0, 10)}</td>
+                  <td className="p-3 border border-gray-700">
+                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md hover:cursor-pointer" onClick={() => handleShowDetail(book)}>
+                      Show Detail
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -134,14 +170,35 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Quick Actions */}
-      <h4 className="mt-6 text-xl font-semibold flex items-center gap-2">🚀 Quick Actions</h4>
-
-      <div className="mt-4 flex gap-3">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">📚 Add New Book</button>
-        <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">🔍 View Borrowed Books</button>
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">👥 Manage Members</button>
-      </div>
+      {/* Modal */}
+      {showModal && selectedBook && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div id='modal' className="bg-white text-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md z-60 relative">
+            <h3 className="text-lg font-bold mb-4">📄 Borrow Details</h3>
+            <p>
+              <strong>Borrower Name:</strong> {selectedBook.id_borrower.full_name}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedBook.id_borrower.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedBook.id_borrower.mobile_number}
+            </p>
+            <hr className="my-4" />
+            <p>
+              <strong>Book Title:</strong> {selectedBook.id_book.book_title}
+            </p>
+            <p>
+              <strong>Author:</strong> {selectedBook.id_book.author}
+            </p>
+            <div className="mt-4 text-right">
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 hover:cursor-pointer">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
