@@ -44,7 +44,7 @@ const ReservedBook = () => {
 
   return (
     <div className="container mx-auto p-6 bg-white min-h-screen">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📖 Reserved Books</h1>
+      <h1 className="main-content text-3xl font-bold text-center text-gray-800 mb-6">📖 Reserved Books</h1>
 
       {loading ? (
         <p className="text-center text-gray-600">Loading reserved books...</p>

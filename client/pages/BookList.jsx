@@ -68,7 +68,7 @@ const BookList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="relative mb-6">
+      <div className="main-content relative mb-6">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Book List</h1>
         {role === 'admin' && (
           <button className="absolute right-0 top-0 border bg-blue-400 rounded-lg text-sm p-2 font-bold text-gray-800 hover:bg-blue-500 hover:cursor-pointer" onClick={() => navigate('/new-book')}>

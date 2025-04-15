@@ -11,7 +11,7 @@ const Dashboard = () => {
   return (
     <div className="flex">
       {/* content */}
-      <div className="px-4 pt-3 mt-5 ml-5 w-full">
+      <div className="main-content px-4 pt-3 mt-5 ml-5 w-full">
         <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">📚 {role === 'admin' ? 'Admin' : 'User'} Dashboard</h2>
 
         {role === 'admin' ? <AdminDashboard /> : <UserDashboard userId={userId} />}
