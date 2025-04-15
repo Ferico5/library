@@ -1,4 +1,5 @@
 const BookModel = require('../models/BookModel.js');
+const BorrowedBook = require('../models/BorrowedBookModel.js');
 
 const createBook = async (req, res) => {
   try {
@@ -64,4 +65,37 @@ const deleteBook = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBook, getBookById, updateBook, deleteBook };
+const getBookRecommendations = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Step 1: Cari semua buku yang sudah pernah dipinjam user
+    const userBorrowedBooks = await BorrowedBook.find({ id_borrower: userId }).populate('id_book');
+
+    const borrowedBookIds = userBorrowedBooks.map((borrow) => borrow.id_book._id.toString());
+    const borrowedCategories = [...new Set(userBorrowedBooks.map((borrow) => borrow.id_book.category))];
+
+    // Step 2: Cari buku lain dalam kategori yang sama, yang belum pernah dibaca
+    let recommendedBooks = await BookModel.find({
+      category: { $in: borrowedCategories },
+      _id: { $nin: borrowedBookIds },
+    }).limit(3);
+
+    // Step 3: Kalau semua buku dalam kategori itu sudah dibaca, ambil random dari semua buku yang belum dibaca
+    if (recommendedBooks.length < 3) {
+      const remaining = 3 - recommendedBooks.length;
+      const additionalBooks = await BookModel.aggregate([{ $match: { _id: { $nin: borrowedBookIds.map((id) => new require('mongoose').Types.ObjectId(id)) } } }, { $sample: { size: remaining } }]);
+      recommendedBooks = [...recommendedBooks, ...additionalBooks];
+    }
+
+    res.status(200).json({
+      msg: 'Book recommendations generated successfully',
+      recommendedBooks,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+module.exports = { createBook, getBook, getBookById, updateBook, deleteBook, getBookRecommendations };
