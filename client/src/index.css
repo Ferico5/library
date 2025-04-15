@@ -1,5 +1,14 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Plugins */
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
