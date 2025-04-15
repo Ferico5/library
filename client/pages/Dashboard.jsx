@@ -189,7 +189,7 @@ const UserDashboard = ({ userId }) => {
 
       <div className="mt-4 overflow-x-auto">
         {borrowedBooks.length === 0 && overdueBooks.length === 0 ? (
-          <p className="ml-8.5 text-gray-400 mt-2">You haven't borrowed any books yet.</p>
+          <p className="ml-8.5 border bg-gray-700 text-white py-2 px-3">You haven't borrowed any books yet.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-700">
             <thead className="bg-gray-700 text-white">
@@ -237,17 +237,8 @@ const UserDashboard = ({ userId }) => {
           </li>
         ))}
 
-        {overdueBooks.length === 0 && reservedBooks.length === 0 && <li className="ml-8.5 text-gray-400">No notifications at the moment. You're all caught up!</li>}
+        {overdueBooks.length === 0 && reservedBooks.length === 0 && <li className="ml-8.5 border bg-gray-700 text-white py-2 px-3">No notifications at the moment. You're all caught up!</li>}
       </ul>
-
-      {/* Quick Actions for Users */}
-      <h4 className="mt-6 text-xl font-semibold flex items-center gap-2">🚀 Quick Actions</h4>
-
-      <div className="mt-4 flex gap-3">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">🔍 Browse Books</button>
-        <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">📅 My Reservations</button>
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">📩 Contact Support</button>
-      </div>
     </>
   );
 };

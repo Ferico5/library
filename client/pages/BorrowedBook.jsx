@@ -186,7 +186,7 @@ const BorrowedBook = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">You have no reserved books.</p>
+              <p className="border bg-gray-700 text-white py-2 px-3">You have no reserved books.</p>
             )}
           </section>
 
@@ -216,7 +216,7 @@ const BorrowedBook = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">You haven't borrowed any books.</p>
+              <p className="border bg-gray-700 text-white py-2 px-3">You haven't borrowed any books.</p>
             )}
           </section>
 
@@ -234,7 +234,7 @@ const BorrowedBook = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">No books have been returned yet.</p>
+              <p className="border bg-gray-700 text-white py-2 px-3">No books have been returned yet.</p>
             )}
           </section>
         </>
