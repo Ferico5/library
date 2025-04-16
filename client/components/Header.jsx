@@ -46,7 +46,7 @@ const Header = () => {
               </>
             ) : null}
             <li>
-              <Link to="/change-profile" className="hover:text-gray-400">
+              <Link to="/change-password" className="hover:text-gray-400">
                 Change Password
               </Link>
             </li>

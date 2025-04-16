@@ -1,5 +1,5 @@
 // import { useState } from 'react'
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // import pages
@@ -10,6 +10,7 @@ import BorrowedBook from '../pages/BorrowedBook';
 import NewBook from '../pages/NewBook';
 import EditBook from '../pages/EditBook';
 import OverdueBook from '../pages/OverdueBook';
+import ChangePassword from '../pages/ChangePassword';
 
 // import components
 import Header from '../components/Header';
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
+      {
+        path: '/',
+        element: <Navigate to="/dashboard" replace />,
+      },
       {
         path: '/auth',
         element: <Auth />,
@@ -89,6 +94,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <OverdueBook />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/change-password',
+        element: (
+          <ProtectedRoute>
+            <ChangePassword />
           </ProtectedRoute>
         ),
       },
