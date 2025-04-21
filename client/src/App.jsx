@@ -12,6 +12,7 @@ import EditBook from '../pages/EditBook';
 import OverdueBook from '../pages/OverdueBook';
 import ChangePassword from '../pages/ChangePassword';
 import ServerError from '../pages/ServerError';
+import PageNotFound from '../pages/PageNotFound';
 
 // import components
 import Header from '../components/Header';
@@ -114,10 +115,10 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // {
-      //   path: '*',
-      //   element: <PageNotFound />,
-      // },
+      {
+        path: '*',
+        element: <PageNotFound />,
+      },
     ],
   },
 ]);
