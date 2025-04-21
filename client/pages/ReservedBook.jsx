@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ReservedBook = () => {
   const [reservedBooks, setReservedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -15,6 +17,8 @@ const ReservedBook = () => {
       .catch((error) => {
         console.error('Error fetching reserved books:', error);
         setLoading(false);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -26,6 +30,8 @@ const ReservedBook = () => {
         setReservedBooks(reservedBooks.filter((book) => book._id !== id));
       } catch (error) {
         console.error('Error updating status:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };
@@ -38,6 +44,8 @@ const ReservedBook = () => {
         setReservedBooks(reservedBooks.filter((book) => book._id !== id));
       } catch (error) {
         console.error('Error updating status:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };
@@ -56,7 +64,7 @@ const ReservedBook = () => {
               <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
               <p className="text-gray-300 mb-1">Borrower: {book.id_borrower.full_name}</p>
               <p className="text-yellow-600 font-semibold mb-1">Status: Reserved</p>
-              <div className='flex gap-2 mt-1'>
+              <div className="flex gap-2 mt-1">
                 <button onClick={() => handleApprove(book._id)} className="mt-2 w-1/2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 hover:cursor-pointer">
                   Approve
                 </button>

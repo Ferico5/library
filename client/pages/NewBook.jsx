@@ -32,7 +32,8 @@ const NewBook = () => {
       navigate('/book-list');
     } catch (error) {
       console.log(error.message);
-      setMessage('❌ Failed to Added New Book!');
+      localStorage.setItem('previousPage', window.location.pathname);
+      navigate('/server-error');
     }
   };
 

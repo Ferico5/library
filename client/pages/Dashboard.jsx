@@ -26,6 +26,7 @@ const AdminDashboard = () => {
   const [overdueBooks, setOverdueBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -35,6 +36,8 @@ const AdminDashboard = () => {
       })
       .catch((error) => {
         console.error('Error fecthing books:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -46,6 +49,8 @@ const AdminDashboard = () => {
       })
       .catch((error) => {
         console.error('Error fetching books:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -57,6 +62,8 @@ const AdminDashboard = () => {
       })
       .catch((error) => {
         console.error('Error fetching books:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -173,7 +180,7 @@ const AdminDashboard = () => {
       {/* Modal */}
       {showModal && selectedBook && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div id='modal' className="bg-white text-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md z-60 relative">
+          <div id="modal" className="bg-white text-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md z-60 relative">
             <h3 className="text-lg font-bold mb-4">📄 Borrow Details</h3>
             <p>
               <strong>Borrower Name:</strong> {selectedBook.id_borrower.full_name}
@@ -235,6 +242,8 @@ const UserDashboard = ({ userId }) => {
       })
       .catch((error) => {
         console.error('Error fetching book:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, [userId]);
 
@@ -248,6 +257,8 @@ const UserDashboard = ({ userId }) => {
       })
       .catch((err) => {
         console.error('Error fetching recommended books:', err);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, [userId]);
 
@@ -291,7 +302,8 @@ const UserDashboard = ({ userId }) => {
         navigate('/borrowed-book');
       } catch (error) {
         console.error('Error borrowing book:', error);
-        alert(error.response?.data?.msg || 'Failed to borrow the book.');
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };

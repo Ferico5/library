@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const OverdueBook = () => {
   const [overdueBooks, setOverdueBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -16,6 +18,8 @@ const OverdueBook = () => {
       .catch((error) => {
         console.error('Error fetching overdue books:', error);
         setLoading(false);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -36,7 +40,9 @@ const OverdueBook = () => {
             <div key={book._id} className="border border-[#1E1E2E] p-4 rounded-lg shadow-md bg-[#2E2E3E] text-white">
               <h3 className="text-lg font-semibold mb-2">{book.id_book.book_title}</h3>
               <p className="text-gray-300 mb-1">Author: {book.id_book.author}</p>
-              <p className="text-gray-300 mb-1">Borrower: {book.id_borrower.full_name}, {book.id_borrower.email}</p>
+              <p className="text-gray-300 mb-1">
+                Borrower: {book.id_borrower.full_name}, {book.id_borrower.email}
+              </p>
               <p className="text-red-500 font-semibold mb-1">Status: Overdue</p>
               <p className="text-gray-300 mb-1">Due Date: {new Date(book.due_date).toLocaleDateString()}</p>
 

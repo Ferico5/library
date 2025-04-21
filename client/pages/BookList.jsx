@@ -23,6 +23,8 @@ const BookList = () => {
       .catch((error) => {
         console.error('Error fetching books:', error);
         setLoading(false);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, []);
 
@@ -33,6 +35,8 @@ const BookList = () => {
         setBooks(books.filter((book) => book._id !== id));
       } catch (error) {
         console.error('Error deleting book:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };
@@ -57,7 +61,8 @@ const BookList = () => {
         navigate('/borrowed-book');
       } catch (error) {
         console.error('Error borrowing book:', error);
-        alert(error.response?.data?.msg || 'Failed to borrow the book.');
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };

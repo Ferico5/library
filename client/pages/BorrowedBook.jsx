@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const BorrowedBook = () => {
   const [reservedBooks, setReservedBooks] = useState([]);
@@ -15,6 +16,7 @@ const BorrowedBook = () => {
   const { user } = useAuth();
   const userId = user._id;
   const role = user.role || 'admin';
+  const navigate = useNavigate();
 
   const handleCancel = async (bookId) => {
     if (window.confirm('Are you sure you want to cancel the reservation?')) {
@@ -24,6 +26,8 @@ const BorrowedBook = () => {
         alert('Reservation canceled successfully!');
       } catch (error) {
         console.error('Error canceling reservation:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };
@@ -47,6 +51,8 @@ const BorrowedBook = () => {
         .catch((error) => {
           console.error('Error fetching borrowed books:', error);
           setLoading(false);
+          localStorage.setItem('previousPage', window.location.pathname);
+          navigate('/server-error');
         });
     } else if (role === 'admin') {
       axios
@@ -59,6 +65,8 @@ const BorrowedBook = () => {
         .catch((error) => {
           console.error('Error fetching borrowed books:', error);
           setLoading(false);
+          localStorage.setItem('previousPage', window.location.pathname);
+          navigate('/server-error');
         });
     }
   }, []);
@@ -98,7 +106,8 @@ const BorrowedBook = () => {
         setFilteredHistory(updatedHistory);
       } catch (error) {
         console.error('Error returning book:', error);
-        alert('Failed to return the book.');
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };

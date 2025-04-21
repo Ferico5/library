@@ -21,6 +21,8 @@ const EditBook = () => {
       })
       .catch((error) => {
         console.error('Error fetching book:', error);
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       });
   }, [id_book]);
 
@@ -33,10 +35,11 @@ const EditBook = () => {
     try {
       await axios.put(`http://localhost:8000/book/${id_book}`, book);
       setMessage('✅ Book updated successfully!');
-      navigate('/book-list')
+      navigate('/book-list');
     } catch (error) {
       console.error('Error updating book:', error);
-      setMessage('❌ Failed to update book!');
+      localStorage.setItem('previousPage', window.location.pathname);
+      navigate('/server-error');
     }
   };
 

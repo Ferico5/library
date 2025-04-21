@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../auth/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = () => {
   const { token, logout } = useAuth();
@@ -10,6 +11,7 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [showCurrent, setShowCurrent] = useState(false);
+  const navigate = useNavigate();
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -43,7 +45,8 @@ const ChangePassword = () => {
       if (err.response && err.response.status === 400) {
         setError('Current password is incorrect');
       } else {
-        setError('An error occurred. Please try again later.');
+        localStorage.setItem('previousPage', window.location.pathname);
+        navigate('/server-error');
       }
     }
   };
