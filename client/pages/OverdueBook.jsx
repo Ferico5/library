@@ -23,9 +23,17 @@ const OverdueBook = () => {
       });
   }, []);
 
-  const handleSendReminder = (borrowerEmail) => {
-    alert(`Reminder sent to ${borrowerEmail}`);
-    // to do
+  const handleSendReminder = async (borrowerEmail, bookTitle) => {
+    try {
+      await axios.post('http://localhost:8000/send-reminder-email', {
+        email: borrowerEmail,
+        bookTitle: bookTitle,
+      });
+      alert(`Reminder sent to ${borrowerEmail}`);
+    } catch (error) {
+      console.error('Failed to send reminder:', error);
+      alert('Failed to send reminder. Please try again later.');
+    }
   };
 
   return (
@@ -46,7 +54,7 @@ const OverdueBook = () => {
               <p className="text-red-500 font-semibold mb-1">Status: Overdue</p>
               <p className="text-gray-300 mb-1">Due Date: {new Date(book.due_date).toLocaleDateString()}</p>
 
-              <button onClick={() => handleSendReminder(book.id_borrower.email)} className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 w-full">
+              <button onClick={() => handleSendReminder(book.id_borrower.email, book.id_book.book_title)} className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 w-full">
                 Send Reminder
               </button>
             </div>
