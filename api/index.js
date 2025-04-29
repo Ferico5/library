@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/UserRoute.js');
 const bookRoutes = require('./routes/BookRoute.js');
 const borrowedBookRoutes = require('./routes/BorrowedBookRoute.js');
+const emailRoutes = require('./routes/EmailRoute.js');
 
 const app = express();
 const PORT = 8000;
@@ -25,6 +26,7 @@ app.use(cors());
 app.use(userRoutes);
 app.use(bookRoutes);
 app.use(borrowedBookRoutes);
+app.use(emailRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started at port ${PORT}`);
