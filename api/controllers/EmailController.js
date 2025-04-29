@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const nodeMailer = require('nodemailer');
 
 const sendReminderEmail = async (req, res) => {
@@ -15,8 +16,8 @@ const sendReminderEmail = async (req, res) => {
       port: 465,
       secure: true,
       auth: {
-        user: '', // to public, you can use ur own email
-        pass: 'gltdsokygaviuahp' // go to app password from google and change it with our,
+        user: process.env.EMAIL_USER, // to public, you can use ur own email
+        pass: process.env.EMAIL_PASS // go to app password from google and change it with your
       },
     });
 
