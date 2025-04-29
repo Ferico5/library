@@ -43,6 +43,11 @@ const Header = () => {
                     Overdue Book
                   </Link>
                 </li>
+                <li>
+                  <Link to="/add-admin" className="hover:text-gray-400">
+                    Add Admin
+                  </Link>
+                </li>
               </>
             ) : null}
             <li>
