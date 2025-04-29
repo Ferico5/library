@@ -1,31 +1,41 @@
-import React from 'react';
-
-const handleChange = (e) => {
-  // delete this line later
-  e.preventDefault();
-  // setBook({ ...book, [e.target.name]: e.target
-};
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  //   if (!book.book_title || !book.author || !book.published_date || !book.category || !book.stock) {
-  //     setMessage('⚠️ All fields must be filled!');
-  //     return;
-  //   }
-
-  //   try {
-  //     await axios.post('http://localhost:8000/book', book);
-  //     setBook({ book_title: '', author: '', published_date: '', category: '', stock: '' });
-  //     navigate('/book-list');
-  //   } catch (error) {
-  //     console.log(error.message);
-  //     localStorage.setItem('previousPage', window.location.pathname);
-  //     navigate('/server-error');
-  //   }
-};
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AddAdmin = () => {
+  const [addAdmin, setAddAdmin] = useState({
+    full_name: '',
+    mobile_number: '',
+    email: '',
+    password: '',
+    role: 'admin',
+  });
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setAddAdmin({ ...addAdmin, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!addAdmin.full_name || !addAdmin.mobile_number || !addAdmin.email || !addAdmin.password) {
+      setMessage('⚠️ All fields must be filled!');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:8000/users', addAdmin);
+      setAddAdmin({ full_name: '', mobile_number: '', email: '', password: '' });
+      alert('New Admin has been successfully added!');
+    } catch (error) {
+      console.log(error.message);
+      localStorage.setItem('previousPage', window.location.pathname);
+      navigate('/server-error');
+    }
+  };
+
   return (
     <div>
       <div className="max-w-lg mx-auto mt-30 mb-5 bg-gray-800 p-6 rounded-lg shadow-lg text-white">
@@ -44,7 +54,7 @@ const AddAdmin = () => {
           <label className="text-sm font-semibold">Password</label>
           <input type="password" name="password" onChange={handleChange} placeholder="Password..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-          {/* {message && <p className="text-yellow-400">{message}</p>} */}
+          {message && <p className="text-yellow-400">{message}</p>}
 
           <button type="submit" className="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md font-semibold hover:cursor-pointer">
             ➕ Add Admin
