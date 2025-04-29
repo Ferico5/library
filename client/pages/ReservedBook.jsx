@@ -29,9 +29,14 @@ const ReservedBook = () => {
         alert(response.data.msg);
         setReservedBooks(reservedBooks.filter((book) => book._id !== id));
       } catch (error) {
-        console.error('Error updating status:', error);
-        localStorage.setItem('previousPage', window.location.pathname);
-        navigate('/server-error');
+        if (error.status === 400) {
+          alert('Book is out of stock!');
+          return;
+        } else {
+          console.error('Error updating status:', error);
+          localStorage.setItem('previousPage', window.location.pathname);
+          navigate('/server-error');
+        }
       }
     }
   };
