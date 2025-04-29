@@ -10,6 +10,7 @@ import BorrowedBook from '../pages/BorrowedBook';
 import NewBook from '../pages/NewBook';
 import EditBook from '../pages/EditBook';
 import OverdueBook from '../pages/OverdueBook';
+import AddAdmin from '../pages/AddAdmin';
 import ChangePassword from '../pages/ChangePassword';
 import ServerError from '../pages/ServerError';
 import PageNotFound from '../pages/PageNotFound';
@@ -96,6 +97,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <OverdueBook />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/add-admin',
+        element: (
+          <ProtectedRoute>
+            <AddAdmin />
           </ProtectedRoute>
         ),
       },
