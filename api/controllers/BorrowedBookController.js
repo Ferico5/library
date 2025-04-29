@@ -111,12 +111,12 @@ const getHistoryBorrowedBooks = async (req, res) => {
   try {
     const borrowedBooks = await BorrowedBook.find().populate('id_book', 'book_title author category').populate('id_borrower', 'full_name email mobile_number');
 
-    borrowedBooks.forEach(async (borrow) => {
+    for (const borrow of borrowedBooks) {
       if (borrow.status === 'borrowed' && borrow.due_date && new Date() > borrow.due_date && !borrow.return_date) {
         borrow.status = 'overdue';
         await borrow.save();
       }
-    });
+    }
 
     res.status(200).json(borrowedBooks);
   } catch (error) {
