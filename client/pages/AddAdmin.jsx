@@ -20,14 +20,14 @@ const AddAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!addAdmin.full_name || !addAdmin.mobile_number || !addAdmin.email || !addAdmin.password) {
+    if (!addAdmin.full_name || !addAdmin.mobile_number || !addAdmin.email || !addAdmin.password || !addAdmin.role) {
       setMessage('⚠️ All fields must be filled!');
       return;
     }
 
     try {
       await axios.post('http://localhost:8000/users', addAdmin);
-      setAddAdmin({ full_name: '', mobile_number: '', email: '', password: '' });
+      setAddAdmin({ full_name: '', mobile_number: '', email: '', password: '', role: 'admin' });
       alert('New Admin has been successfully added!');
     } catch (error) {
       console.log(error.message);
@@ -43,16 +43,22 @@ const AddAdmin = () => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="text-sm font-semibold">Full Name</label>
-          <input type="text" name="full_name" onChange={handleChange} placeholder="Full Name..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" name="full_name" value={addAdmin.full_name} onChange={handleChange} placeholder="Full Name..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
           <label className="text-sm font-semibold">Mobile Number</label>
-          <input type="text" name="mobile_number" onChange={handleChange} placeholder="Mobile Number..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" name="mobile_number" value={addAdmin.mobile_number} onChange={handleChange} placeholder="Mobile Number..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
           <label className="text-sm font-semibold">Email</label>
-          <input type="email" name="email" onChange={handleChange} placeholder="Email..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="email" name="email" value={addAdmin.email} onChange={handleChange} placeholder="Email..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
           <label className="text-sm font-semibold">Password</label>
-          <input type="password" name="password" onChange={handleChange} placeholder="Password..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="password" name="password" value={addAdmin.password} onChange={handleChange} placeholder="Password..." className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+          <label className="text-sm font-semibold">Role</label>
+          <select name="role" value={addAdmin.role} onChange={handleChange} className="p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="admin">Admin</option>
+            <option value="superadmin">Super Admin</option>
+          </select>
 
           {message && <p className="text-yellow-400">{message}</p>}
 
