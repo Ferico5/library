@@ -71,4 +71,32 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser, changePassword };
+const getUserById = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    res.status(200).json({ msg: 'User successfully fetched!', user });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const updateProfile = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updateProfile) {
+      return res.status(404).json({ msg: 'User not found!' });
+    }
+
+    res.status(200).json({ msg: 'Profile updated!', profile: updateProfile });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+module.exports = { createUser, loginUser, changePassword, getUserById, updateProfile };

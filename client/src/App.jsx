@@ -12,6 +12,7 @@ import EditBook from '../pages/EditBook';
 import OverdueBook from '../pages/OverdueBook';
 import AddAdmin from '../pages/AddAdmin';
 import ChangePassword from '../pages/ChangePassword';
+import ChangeProfile from '../pages/ChangeProfile';
 import ServerError from '../pages/ServerError';
 import PageNotFound from '../pages/PageNotFound';
 
@@ -113,6 +114,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ChangePassword />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/change-profile',
+        element: (
+          <ProtectedRoute>
+            <ChangeProfile />
           </ProtectedRoute>
         ),
       },

@@ -50,6 +50,11 @@ const Header = () => {
                 Change Password
               </Link>
             </li>
+            <li>
+              <Link to="/change-profile" className="hover:text-gray-400">
+                Change Profile
+              </Link>
+            </li>
             {user && user.role === 'superadmin' ? (
               <li>
               <Link to="/add-admin" className="hover:text-gray-400">
