@@ -12,9 +12,9 @@ const Dashboard = () => {
     <div className="flex">
       {/* content */}
       <div className="main-content px-4 pt-3 mt-5 ml-5 w-full">
-        <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">📚 {role === 'admin' ? 'Admin' : 'User'} Dashboard</h2>
+        <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">📚 {role === 'admin' || role === 'superadmin' ? 'Admin' : 'User'} Dashboard</h2>
 
-        {role === 'admin' ? <AdminDashboard /> : <UserDashboard userId={userId} />}
+        {role === 'admin' || role === 'superadmin' ? <AdminDashboard /> : <UserDashboard userId={userId} />}
       </div>
     </div>
   );

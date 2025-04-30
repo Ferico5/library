@@ -75,7 +75,7 @@ const BookList = () => {
     <div className="container mx-auto p-6">
       <div className="main-content relative mb-6">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📚 Book List</h1>
-        {role === 'admin' && (
+        {role === 'admin' || role === 'superadmin' && (
           <button className="absolute right-0 top-0 border bg-blue-400 rounded-lg text-sm p-2 font-bold text-gray-800 hover:bg-blue-500 hover:cursor-pointer" onClick={() => navigate('/new-book')}>
             ➕ New Book
           </button>
@@ -99,7 +99,7 @@ const BookList = () => {
               <p className="text-gray-300 mb-1">Category: {book.category}</p>
               <p className="text-gray-300 mb-1">Stock: {book.stock}</p>
 
-              {role === 'admin' ? (
+              {role === 'admin' || role === 'superadmin' ? (
                 <div className="mt-4 flex gap-2">
                   <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white rounded w-1/2" onClick={() => navigate(`/edit-book/${book._id}`)}>
                     ✏️ Update

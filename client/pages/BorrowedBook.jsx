@@ -54,7 +54,7 @@ const BorrowedBook = () => {
           localStorage.setItem('previousPage', window.location.pathname);
           navigate('/server-error');
         });
-    } else if (role === 'admin') {
+    } else if (role === 'admin' || role === 'superadmin') {
       axios
         .get('http://localhost:8000/history-borrow-book')
         .then((response) => {
@@ -72,7 +72,7 @@ const BorrowedBook = () => {
   }, []);
 
   useEffect(() => {
-    if (role === 'admin') {
+    if (role === 'admin' || role === 'superadmin') {
       if (searchQuery.trim() === '') {
         setFilteredHistory(history);
       } else {
@@ -118,7 +118,7 @@ const BorrowedBook = () => {
 
       {loading ? (
         <p className="text-center text-gray-600">Loading borrowed books...</p>
-      ) : role === 'admin' ? (
+      ) : role === 'admin' || role === 'superadmin' ? (
         <section>
           <h2 className="text-xl font-semibold text-gray-700 mb-4">All Borrowed Books</h2>
           <div className="flex mb-4">

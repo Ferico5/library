@@ -31,7 +31,7 @@ const Header = () => {
                 Borrowed Book
               </Link>
             </li>
-            {user && user.role === 'admin' ? (
+            {user && (user.role === 'admin' || user.role === 'superadmin') ? (
               <>
                 <li>
                   <Link to="/reserved-book" className="hover:text-gray-400">
@@ -43,11 +43,6 @@ const Header = () => {
                     Overdue Book
                   </Link>
                 </li>
-                <li>
-                  <Link to="/add-admin" className="hover:text-gray-400">
-                    Add Admin
-                  </Link>
-                </li>
               </>
             ) : null}
             <li>
@@ -55,6 +50,13 @@ const Header = () => {
                 Change Password
               </Link>
             </li>
+            {user && user.role === 'superadmin' ? (
+              <li>
+              <Link to="/add-admin" className="hover:text-gray-400">
+                Add Admin
+              </Link>
+            </li>
+            ) : null}
           </ul>
         </nav>
       )}
