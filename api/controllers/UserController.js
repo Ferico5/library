@@ -87,12 +87,32 @@ const getUserById = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const updateProfile = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updateProfile) {
-      return res.status(404).json({ msg: 'User not found!' });
+    const { full_name, mobile_number, email, password } = req.body;
+    const userId = req.params.id;
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
     }
 
-    res.status(200).json({ msg: 'Profile updated!', profile: updateProfile });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Current password is incorrect' });
+    }
+
+    if (user.email !== email) {
+      const existingEmail = await UserModel.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ msg: 'Email is already in use' });
+      }
+    }
+
+    user.full_name = full_name;
+    user.mobile_number = mobile_number;
+    user.email = email;
+    await user.save();
+
+    res.status(200).json({ msg: 'Profile updated!', profile: user });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: 'Server error' });
